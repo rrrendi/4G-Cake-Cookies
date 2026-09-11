@@ -28,24 +28,31 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function register(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'no_hp' => ['required', 'string', 'max:20'], // Tambahan untuk 4G Cake
+            'alamat' => ['required', 'string'], // Tambahan untuk 4G Cake
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'customer', // Default role untuk pendaftar baru
+            'status' => 'aktif',
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Arahkan ke beranda setelah berhasil daftar
+        return redirect()->route('home')->with('success_toast', 'Pendaftaran berhasil. Selamat datang di 4G Cake & Cookies!');
     }
 }
