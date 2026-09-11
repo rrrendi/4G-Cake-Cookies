@@ -12,9 +12,21 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Akun Pengguna
-        User::create(['name' => 'Owner 4G', 'email' => 'owner@4gcake.com', 'phone' => '081234567890', 'password' => Hash::make('password123'), 'role' => 'owner']);
-        User::create(['name' => 'Admin Operasional', 'email' => 'admin@4gcake.com', 'phone' => '081234567891', 'password' => Hash::make('password123'), 'role' => 'admin']);
+        // 1. Akun Admin dan Owner
+
+        //OWNER ieu mah
+        User::create(['name' => 'Owner 4G', 
+            'email' => 'owner@4gcake.com', 
+            'phone' => '081234567890', 
+            'password' => Hash::make('password123'), 
+            'role' => 'owner']);
+
+        //ADMIN ieu mah
+        User::create(['name' => 'Admin Operasional', 
+            'email' => 'admin@4gcake.com', 
+            'phone' => '081234567891', 
+            'password' => Hash::make('password123'), 
+            'role' => 'admin']);
 
         // 2. Kategori Master
         $kategori = [

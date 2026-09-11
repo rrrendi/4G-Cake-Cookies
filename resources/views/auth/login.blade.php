@@ -142,9 +142,6 @@
       <p class="text-center text-sm text-cocoa-400 mt-8">
         Belum punya akun? <a href="{{ route('register') }}" class="font-semibold text-rose-600 hover:underline">Daftar sekarang</a>
       </p>
-      <p class="text-center text-xs text-cocoa-300 mt-3">
-        Pemilik usaha? <button onclick="toast('Halaman panel admin menyusul.','info')" class="hover:text-rose-600 transition underline">Masuk ke panel admin</button>
-      </p>
     </div>
   </div>
 </div>

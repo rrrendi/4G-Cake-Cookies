@@ -10,6 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+  
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
   tailwind.config = {
@@ -36,7 +43,6 @@
 </head>
 
 <body data-base="{{ asset('/') }}" class="min-h-screen bg-cream-50 text-cocoa-700 antialiased">
-<a href="#konten" class="skip-link">Lompat ke konten utama</a>
 
 <!-- NAVBAR START -->
 @include('components.navbar')
