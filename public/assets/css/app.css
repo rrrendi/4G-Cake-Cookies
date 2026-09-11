@@ -1,0 +1,340 @@
+/* ==========================================================================
+   4G Cake & Cookies — Design Tokens & Komponen
+   Dipakai bersama Tailwind CDN. File ini nanti dipindah ke resources/css/
+   ========================================================================== */
+
+:root {
+  --cream-50:  #FFFCF8;
+  --cream-100: #FDF6EE;
+  --cream-200: #F7EADB;
+  --blush-100: #F9E2E2;
+  --blush-200: #F2CCCC;
+  --rose-400:  #E39898;
+  --rose-500:  #D97E7E;
+  --rose-600:  #C56868;
+  --cocoa-300: #B49B8C;
+  --cocoa-400: #8B6B58;
+  --cocoa-500: #6B4C3C;
+  --cocoa-700: #3C2A21;
+  --gold-500:  #C9A227;
+  --ring:      rgba(217,126,126,.28);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--cream-50);
+  color: var(--cocoa-700);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4,.font-display { font-family: 'Quicksand','Inter',sans-serif; }
+
+::selection { background: var(--blush-200); color: var(--cocoa-700); }
+
+/* ---------- Scrollbar halus ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--cream-100); }
+::-webkit-scrollbar-thumb { background: var(--blush-200); border-radius: 999px; border: 2px solid var(--cream-100); }
+::-webkit-scrollbar-thumb:hover { background: var(--rose-400); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---------- Tombol ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  border-radius: 9999px; font-weight: 600; font-size: .875rem; line-height: 1;
+  padding: .75rem 1.35rem; border: 1px solid transparent; cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
+  white-space: nowrap; text-decoration: none;
+}
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
+.btn-sm { padding: .7rem 1rem; font-size: .8125rem; }
+.btn-lg { padding: .95rem 1.9rem; font-size: .95rem; }
+.btn-block { width: 100%; }
+
+.btn-primary { background: var(--rose-500); color: #fff; box-shadow: 0 8px 20px -10px rgba(197,104,104,.85); }
+.btn-primary:hover { background: var(--rose-600); box-shadow: 0 14px 26px -12px rgba(197,104,104,.9); transform: translateY(-1px); }
+
+.btn-cocoa { background: var(--cocoa-500); color: #fff; box-shadow: 0 8px 20px -10px rgba(60,42,33,.7); }
+.btn-cocoa:hover { background: var(--cocoa-700); transform: translateY(-1px); }
+
+.btn-outline { background: transparent; color: var(--cocoa-500); border-color: var(--blush-200); }
+.btn-outline:hover { background: var(--cream-100); border-color: var(--rose-400); color: var(--rose-600); }
+
+.btn-ghost { background: transparent; color: var(--cocoa-400); }
+.btn-ghost:hover { background: var(--cream-100); color: var(--cocoa-700); }
+
+.btn-gold { background: var(--gold-500); color: #fff; }
+.btn-gold:hover { background: #A8871F; transform: translateY(-1px); }
+
+.btn-danger { background: #fff; color: #B3261E; border-color: #F3C9C6; }
+.btn-danger:hover { background: #FDECEA; }
+
+.btn[disabled], .btn.is-disabled { opacity: .5; pointer-events: none; }
+
+/* ---------- Kartu ---------- */
+.card {
+  background: #fff; border: 1px solid var(--cream-200); border-radius: 1.25rem;
+  box-shadow: 0 1px 2px rgba(60,42,33,.04), 0 12px 30px -22px rgba(60,42,33,.35);
+}
+.card-hover { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card-hover:hover { transform: translateY(-4px); border-color: var(--blush-200);
+  box-shadow: 0 18px 40px -24px rgba(60,42,33,.5); }
+
+/* ---------- Form ---------- */
+.label { display:block; font-size:.8125rem; font-weight:600; color: var(--cocoa-500); margin-bottom:.4rem; }
+.input, .select, .textarea {
+  width: 100%; background: #fff; border: 1px solid var(--cream-200); border-radius: .85rem;
+  padding: .7rem .9rem; font-size: .9rem; color: var(--cocoa-700);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.input::placeholder, .textarea::placeholder { color: #BBA99C; }
+.input:focus, .select:focus, .textarea:focus {
+  outline: none; border-color: var(--rose-400); box-shadow: 0 0 0 4px var(--ring);
+}
+.select { appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B6B58' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .8rem center; padding-right: 2.2rem;
+}
+.hint { font-size: .75rem; color: var(--cocoa-400); margin-top: .35rem; }
+
+/* ---------- Badge status ---------- */
+.badge {
+  display:inline-flex; align-items:center; gap:.35rem; border-radius:9999px;
+  padding:.28rem .7rem; font-size:.72rem; font-weight:600; line-height:1.1; white-space:nowrap;
+}
+.badge-dot { width:.45rem; height:.45rem; border-radius:9999px; background: currentColor; }
+.badge-wait    { background:#FEF4E2; color:#96650B; }
+.badge-process { background:#E9F1FD; color:#1F5AAE; }
+.badge-pack    { background:#F1EBFA; color:#5B3E9B; }
+.badge-ship    { background:#E6F4F1; color:#12695A; }
+.badge-done    { background:#E9F6EC; color:#1E7A3C; }
+.badge-cancel  { background:#FDEBEA; color:#B3261E; }
+.badge-neutral { background: var(--cream-100); color: var(--cocoa-500); }
+.badge-gold    { background:#FBF3DC; color:#8A6E12; }
+.badge-rose    { background: var(--blush-100); color: var(--rose-600); }
+
+/* ---------- Tabel ---------- */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.data { width: 100%; border-collapse: collapse; font-size: .875rem; min-width: 640px; }
+table.data thead th {
+  text-align: left; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--cocoa-400); font-weight: 700; padding: .85rem 1rem;
+  background: var(--cream-100); white-space: nowrap;
+}
+table.data thead th:first-child { border-top-left-radius: .9rem; border-bottom-left-radius: .9rem; }
+table.data thead th:last-child  { border-top-right-radius: .9rem; border-bottom-right-radius: .9rem; }
+table.data tbody td { padding: .9rem 1rem; border-bottom: 1px solid var(--cream-200); vertical-align: middle; }
+table.data tbody tr:last-child td { border-bottom: 0; }
+table.data tbody tr { transition: background-color .15s ease; }
+table.data tbody tr:hover { background: var(--cream-50); }
+
+/* ---------- Toast ---------- */
+#toast-root {
+  position: fixed; z-index: 90; right: 1rem; bottom: 1rem;
+  display: flex; flex-direction: column; gap: .6rem; pointer-events: none;
+}
+.toast {
+  pointer-events: auto; display: flex; align-items: flex-start; gap: .7rem;
+  background: #fff; border: 1px solid var(--cream-200); border-left-width: 4px;
+  border-radius: .9rem; padding: .8rem 1rem; min-width: 260px; max-width: 340px;
+  box-shadow: 0 18px 40px -20px rgba(60,42,33,.55);
+  animation: toast-in .28s cubic-bezier(.2,.8,.3,1);
+}
+.toast.hide { animation: toast-out .25s forwards; }
+.toast-success { border-left-color: #3E9B5F; }
+.toast-error   { border-left-color: #C56868; }
+.toast-warn    { border-left-color: #D9A93F; }
+.toast-info    { border-left-color: var(--cocoa-400); }
+@keyframes toast-in  { from { opacity:0; transform: translateY(12px) scale(.97); } to { opacity:1; transform:none; } }
+@keyframes toast-out { to   { opacity:0; transform: translateY(8px) scale(.98); } }
+
+/* ---------- Animasi masuk ---------- */
+@keyframes fade-up { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform:none; } }
+.fade-up { animation: fade-up .5s ease both; }
+.d-1 { animation-delay:.06s } .d-2 { animation-delay:.12s } .d-3 { animation-delay:.18s }
+.d-4 { animation-delay:.24s } .d-5 { animation-delay:.30s } .d-6 { animation-delay:.36s }
+
+/* ---------- Lain-lain ---------- */
+[x-cloak] { display: none !important; }
+.link-underline { position: relative; }
+.link-underline::after {
+  content:''; position:absolute; left:0; bottom:-4px; height:2px; width:0;
+  background: var(--rose-500); transition: width .25s ease; border-radius: 2px;
+}
+.link-underline:hover::after, .link-underline.active::after { width: 100%; }
+.divider-dot { width:4px; height:4px; border-radius:999px; background: var(--blush-200); }
+.star { color: var(--gold-500); }
+.star-empty { color: #E5DCD3; }
+@media print { .no-print { display: none !important; } }
+
+/* ==========================================================================
+   FASE 1.5 — perbaikan layout, aksesibilitas, dan state
+   ========================================================================== */
+
+/* ---------- Cegah grid/flex item memaksa halaman melebar (overflow-x) ----- */
+.grid > *, .flex > .table-wrap { min-width: 0; }
+img, svg, canvas { max-width: 100%; }
+
+/* ---------- Focus terlihat di seluruh elemen interaktif ------------------- */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible,
+summary:focus-visible, label:focus-visible {
+  outline: 2px solid var(--rose-500);
+  outline-offset: 2px;
+  border-radius: .5rem;
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+
+/* ---------- Skip link ---------------------------------------------------- */
+.skip-link {
+  position: absolute; left: .75rem; top: -3rem; z-index: 100;
+  background: var(--cocoa-700); color: #fff; padding: .6rem 1rem;
+  border-radius: .75rem; font-size: .8125rem; font-weight: 600;
+  transition: top .2s ease;
+}
+.skip-link:focus { top: .75rem; }
+
+/* ---------- Target sentuh minimal di layar kecil ------------------------- */
+.icon-btn {
+  display: inline-grid; place-items: center;
+  width: 2.5rem; height: 2.5rem; border-radius: .85rem;
+  color: var(--cocoa-400); transition: background-color .15s ease, color .15s ease;
+}
+.icon-btn:hover { background: var(--cream-100); color: var(--cocoa-700); }
+.icon-btn-danger:hover { background: #FDECEA; color: #A6231C; }
+@media (max-width: 640px) {
+  .tap { min-width: 44px; min-height: 44px; }
+}
+/* Badge yang berfungsi sebagai tombol perlu area sentuh layak */
+button.badge { min-height: 36px; padding-left: .85rem; padding-right: .85rem; cursor: pointer; }
+button.badge:hover { filter: brightness(.97); }
+
+/* ---------- Skeleton loading -------------------------------------------- */
+.skeleton {
+  position: relative; overflow: hidden;
+  background: var(--cream-100); border-radius: .75rem;
+}
+.skeleton::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 1.35s infinite;
+}
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skeleton-line { height: .75rem; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+  .fade-up { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- Spinner tombol ---------------------------------------------- */
+.spinner {
+  width: 1rem; height: 1rem; border-radius: 999px; flex: none;
+  border: 2px solid currentColor; border-top-color: transparent;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn.is-loading { pointer-events: none; opacity: .8; }
+
+/* ---------- Modal (pola seragam) ---------------------------------------- */
+.modal-root { position: fixed; inset: 0; z-index: 60; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(60,42,33,.45); backdrop-filter: blur(3px); }
+.modal-panel { position: relative; width: 100%; }
+.modal-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--cream-200);
+}
+.modal-foot {
+  display: flex; flex-wrap: wrap; gap: .75rem;
+  padding: 1rem 1.5rem; border-top: 1px solid var(--cream-200); background: var(--cream-50);
+}
+
+/* ---------- Bar aksi lengket di layar kecil ------------------------------ */
+.sticky-cta {
+  position: sticky; bottom: 0; z-index: 30;
+  background: rgba(255,252,248,.96); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--cream-200);
+  padding: .75rem 1rem calc(.75rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 30px -22px rgba(60,42,33,.7);
+}
+@media (min-width: 1024px) { .sticky-cta { display: none; } }
+
+/* ---------- Input error state ------------------------------------------- */
+.input.is-error, .select.is-error, .textarea.is-error {
+  border-color: #C56868; box-shadow: 0 0 0 4px rgba(197,104,104,.15);
+}
+.error-text { font-size: .75rem; color: #A6231C; margin-top: .35rem; display: flex; gap: .35rem; align-items: center; }
+
+/* ---------- Timeline ------------------------------------------------------ */
+.timeline-line { position: absolute; left: 15px; top: 30px; bottom: -14px; width: 2px; background: var(--cream-200); }
+.timeline-line-lg { left: 19px; }
+
+/* ---------- Toast responsif ---------------------------------------------- */
+@media (max-width: 640px) {
+  #toast-root { left: .75rem; right: .75rem; bottom: .75rem; }
+  .toast { min-width: 0; max-width: none; width: 100%; }
+}
+
+/* ==========================================================================
+   FASE 1.6 — sidebar admin: gradasi & tekstur
+   Sebelumnya sidebar polos bg-white. Selector "aside.bg-white" aman dipakai
+   tanpa mengubah satu pun file HTML: hanya <aside> sidebar admin (9 halaman
+   admin/*.html, kecuali admin/login.html yang tidak punya sidebar) memakai
+   bg-white langsung pada elemen <aside>. Aside lain (keranjang, checkout,
+   pesanan-detail) memakai .card atau tanpa bg-white, jadi tidak ikut kena.
+   ========================================================================== */
+aside.bg-white {
+  /* JANGAN set position di sini — <aside> aslinya "fixed" (mobile) dan
+     "lg:sticky" (desktop) dari Tailwind, itulah yang membuatnya menempel
+     saat halaman discroll. fixed/sticky sudah cukup jadi acuan posisi
+     untuk blob ::before/::after di bawah, tanpa perlu position:relative. */
+  overflow: hidden;
+  background:
+    radial-gradient(rgba(255,255,255,.045) 1px, transparent 1.5px) 0 0/18px 18px,
+    linear-gradient(165deg, #2E1F18 0%, #3C2A21 42%, #4B342A 78%, #3C2A21 100%);
+  border-right-color: rgba(255,255,255,.08) !important;
+}
+/* Blob dekoratif — echo warna aksen brand (rose & gold), senada dengan
+   gradient di admin/login.html supaya panel admin terasa satu keluarga. */
+aside.bg-white::before,
+aside.bg-white::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+}
+aside.bg-white::before {
+  top: -70px; right: -85px;
+  width: 230px; height: 230px;
+  background: radial-gradient(circle, rgba(217,126,126,.38), transparent 72%);
+  filter: blur(4px);
+}
+aside.bg-white::after {
+  bottom: -110px; left: -75px;
+  width: 270px; height: 270px;
+  background: radial-gradient(circle, rgba(201,162,39,.28), transparent 72%);
+  filter: blur(6px);
+}
+/* Konten asli (header, nav, kartu profil) dipastikan tampil di atas blob */
+aside.bg-white > * { position: relative; z-index: 1; }
+
+/* Penyesuaian kontras teks & garis supaya tetap terbaca di atas gradasi gelap */
+aside.bg-white .text-cocoa-700 { color: #F7EADB !important; }
+aside.bg-white .text-cocoa-500 { color: #DCCBBE !important; }
+aside.bg-white .text-cocoa-400 { color: #C9B39F !important; }
+aside.bg-white .text-cocoa-300 { color: rgba(247,234,219,.5) !important; }
+aside.bg-white .border-cream-200 { border-color: rgba(255,255,255,.08) !important; }
+aside.bg-white .bg-cream-200 { background-color: rgba(255,255,255,.08) !important; }
+aside.bg-white .bg-cream-100 { background-color: rgba(255,255,255,.06) !important; }
+aside.bg-white .hover\:bg-cream-100:hover { background-color: rgba(255,255,255,.08) !important; }
+aside.bg-white .hover\:text-cocoa-700:hover { color: #FDF6EE !important; }
+aside.bg-white .icon-btn { color: rgba(247,234,219,.7); }
+aside.bg-white .icon-btn:hover { background: rgba(255,255,255,.08); color: #FDF6EE; }
+/* Item menu aktif (bg-rose-500) & badge notifikasi dibiarkan apa adanya —
+   sudah kontras tinggi di atas gradasi cokelat gelap ini. */
+@media (prefers-reduced-motion: reduce) {
+  aside.bg-white::before, aside.bg-white::after { filter: none; }
+}

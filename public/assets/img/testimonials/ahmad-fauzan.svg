@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Ilustrasi avatar ahmad fauzan">
+  <defs><clipPath id="c3"><circle cx="60" cy="60" r="60"/></clipPath></defs>
+  <g clip-path="url(#c3)">
+    <rect width="120" height="120" fill="#EDE7F5"/>
+    <circle cx="60" cy="46" r="88" fill="#EDE7F5"/>
+    <circle cx="60" cy="52" r="22" fill="#F3D9C6"/>
+    <path d="M38 48c0-14 10-22 22-22s22 8 22 22c-6-6-13-9-22-9s-16 3-22 9z" fill="#8E6BB0"/>
+    <path d="M26 112c4-19 15-28 34-28s30 9 34 28z" fill="#8E6BB0"/>
+    <path d="M34 112c4-13 12-20 26-20s22 7 26 20z" fill="#fff" opacity=".85"/>
+    <circle cx="53" cy="52" r="2.4" fill="#3C2A21"/><circle cx="67" cy="52" r="2.4" fill="#3C2A21"/>
+    <path d="M54 62q6 5 12 0" stroke="#3C2A21" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

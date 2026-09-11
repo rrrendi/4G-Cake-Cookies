@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 560" width="560" height="560" role="img" aria-label="Kue 4G Cake and Cookies">
+  <defs>
+    <linearGradient id="h1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDF1F1"/><stop offset="1" stop-color="#F7E3D2"/>
+    </linearGradient>
+    <linearGradient id="h2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBEAEA"/><stop offset="1" stop-color="#EFC9C9"/>
+    </linearGradient>
+  </defs>
+  <circle cx="280" cy="280" r="278" fill="url(#h1)"/>
+  <circle cx="120" cy="120" r="58" fill="#fff" opacity=".45"/>
+  <circle cx="470" cy="430" r="76" fill="#fff" opacity=".35"/>
+  <ellipse cx="280" cy="470" rx="180" ry="22" fill="#000" opacity=".07"/>
+  <rect x="150" y="430" width="260" height="26" rx="13" fill="#E8D3BE"/>
+  <path d="M170 300h220a12 12 0 0 1 12 12v104a16 16 0 0 1-16 16H174a16 16 0 0 1-16-16V312a12 12 0 0 1 12-12z" fill="url(#h2)"/>
+  <path d="M158 330c26 18 48 2 72 16s48 0 72 14 48-4 88 8v-56a12 12 0 0 0-12-12H170a12 12 0 0 0-12 12z" fill="#fff" opacity=".9"/>
+  <path d="M170 300c0-38 50-58 110-58s110 20 110 58z" fill="#F6D9D9"/>
+  <path d="M170 300c0-38 50-58 110-58" fill="none" stroke="#fff" stroke-width="6" opacity=".7"/>
+  <circle cx="280" cy="214" r="17" fill="#fff"/>
+  <rect x="274" y="164" width="12" height="42" rx="6" fill="#C9A227"/>
+  <circle cx="280" cy="158" r="10" fill="#F0B429"/>
+  <circle cx="212" cy="268" r="11" fill="#fff" opacity=".85"/>
+  <circle cx="348" cy="268" r="11" fill="#fff" opacity=".85"/>
+  <circle cx="280" cy="262" r="9" fill="#E39898"/>
+  <circle cx="410" cy="360" r="40" fill="#F1DEC3"/>
+  <circle cx="398" cy="348" r="7" fill="#6B4A38"/><circle cx="424" cy="366" r="6" fill="#6B4A38"/>
+  <circle cx="404" cy="376" r="6" fill="#6B4A38"/>
+  <circle cx="146" cy="374" r="34" fill="#EBD6B8"/>
+  <circle cx="136" cy="366" r="6" fill="#6B4A38"/><circle cx="158" cy="380" r="5" fill="#6B4A38"/>
+</svg>
