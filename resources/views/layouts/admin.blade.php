@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Panel Admin 4G Cake & Cookies">
     <title>@yield('title', 'Dashboard Admin · 4G Cake & Cookies')</title>
-    <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23D97E7E'/%3E%3Ctext x='16' y='22' font-family='Verdana' font-size='14' font-weight='bold' text-anchor='middle' fill='white'%3E4G%3C/text%3E%3C/svg%3E">
+    <!-- Favicon sudah diganti ke gambar asli -->
+    <link rel="icon" href="{{ asset('assets/img/logo_4g.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -84,8 +84,9 @@
                 @yield('content')
             </main>
 
-            <footer class="px-4 sm:px-6 lg:px-8 py-6 text-xs text-cocoa-300 border-t border-cream-200 mt-auto">
-                &copy; {{ date('Y') }} 4G Cake &amp; Cookies &middot; Panel admin prototype
+            <footer class="px-4 sm:px-6 lg:px-8 py-6 text-xs text-cocoa-300 border-t border-cream-200 mt-auto flex items-center gap-3">
+                <img src="{{ asset('assets/img/logo_4g.png') }}" alt="Logo" class="h-6 w-auto opacity-50 grayscale">
+                <span>&copy; {{ date('Y') }} 4G Cake &amp; Cookies &middot; Panel admin prototype</span>
             </footer>
         </div>
     </div>
@@ -133,7 +134,6 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
 
-    <!-- PENANGKAP NOTIFIKASI BACKEND LARAVEL -->
     @if(session('success_toast'))
         <script>document.addEventListener('DOMContentLoaded', () => setTimeout(() => toast("{{ session('success_toast') }}", 'success', 'Berhasil'), 300));</script>
     @endif

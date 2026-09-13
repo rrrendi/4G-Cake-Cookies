@@ -18,7 +18,9 @@
         <p class="text-[11px] text-cream-200/50 mb-0.5">Nomor pesanan</p>
         <p class="font-display font-bold text-xl text-white" x-text="o.kode"></p>
       </div>
-      <span class="badge" :class="STATUS_PESANAN[o.status].cls"><span class="badge-dot"></span><span x-text="STATUS_PESANAN[o.status].label"></span></span>
+      <span class="badge" :class="STATUS_PESANAN[o.status] ? STATUS_PESANAN[o.status].cls : ''">
+        <span class="badge-dot"></span><span x-text="STATUS_PESANAN[o.status] ? STATUS_PESANAN[o.status].label : o.status"></span>
+      </span>
       <div class="ml-auto text-right">
         <p class="text-[11px] text-cream-200/50 mb-0.5">Total dibayar</p>
         <p class="font-display font-bold text-xl text-white" x-text="rp(o.total)"></p>
@@ -38,7 +40,7 @@
       </div>
       <div class="p-5">
         <p class="text-[11px] text-cocoa-300 mb-1.5">Metode</p>
-        <p class="text-sm font-medium text-cocoa-700" x-text="o.metode === 'J&T' ? 'Dikirim via J&T Express' : 'Ambil di tempat'"></p>
+        <p class="text-sm font-medium text-cocoa-700" x-text="o.metode"></p>
       </div>
     </div>
   </div>
@@ -49,22 +51,23 @@
       <div class="card p-6">
         <h2 class="font-display font-bold text-cocoa-700 mb-5">Rincian pesanan</h2>
         <div class="space-y-4">
-          <template x-for="it in o.items" :key="it.nama">
+          <template x-for="it in o.items" :key="it.id">
             <div class="flex items-center gap-4">
-              <a :href="'{{ url('/produk') }}/' + it.slug" class="w-16 h-16 rounded-2xl overflow-hidden bg-cream-100 shrink-0">
-                <img :src="imgProduk(it.slug)" :alt="it.nama" class="w-full h-full object-cover">
+              <a :href="'{{ url('/produk') }}/' + it.slug" class="w-16 h-16 rounded-2xl overflow-hidden bg-cream-100 shrink-0 border border-cream-200">
+                <img :src="it.foto" :alt="it.nama" onerror="this.onerror=null; this.src='{{ asset('assets/img/products/placeholder.svg') }}';" class="w-full h-full object-cover">
               </a>
               <div class="min-w-0 flex-1">
                 <p class="font-medium text-cocoa-700 truncate" x-text="it.nama"></p>
-                <p class="text-xs text-cocoa-300" x-text="rp(it.harga) + ' × ' + it.qty"></p>
+                <p class="text-xs text-cocoa-300" x-text="rp(it.harga) + ' × ' + it.qty + ' (' + it.varian + ')'"></p>
               </div>
               <p class="font-semibold text-cocoa-700 shrink-0" x-text="rp(it.harga * it.qty)"></p>
             </div>
           </template>
         </div>
         <dl class="space-y-2.5 text-sm mt-6 pt-5 border-t border-cream-200">
-          <div class="flex justify-between gap-4"><dt class="text-cocoa-400">Subtotal produk</dt><dd class="text-cocoa-700" x-text="rp(o.total - o.ongkir)"></dd></div>
-          <div class="flex justify-between gap-4"><dt class="text-cocoa-400">Ongkos kirim</dt><dd class="text-cocoa-700" x-text="o.ongkir ? rp(o.ongkir) : 'Gratis'"></dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-cocoa-400">Subtotal produk</dt><dd class="text-cocoa-700" x-text="rp(o.total - o.ongkir - o.kemasan)"></dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-cocoa-400">Biaya kemasan</dt><dd class="text-cocoa-700" x-text="rp(o.kemasan)"></dd></div>
+          <div class="flex justify-between gap-4"><dt class="text-cocoa-400">Ongkos kirim</dt><dd class="text-cocoa-700" x-text="o.ongkir > 0 ? rp(o.ongkir) : 'Gratis'"></dd></div>
           <div class="flex justify-between gap-4 pt-3 border-t border-cream-200 items-baseline">
             <dt class="font-semibold text-cocoa-700">Total</dt>
             <dd class="font-display font-bold text-2xl text-rose-600" x-text="rp(o.total)"></dd>
@@ -107,25 +110,56 @@
         <p class="font-medium text-cocoa-700 text-sm" x-text="o.pelanggan"></p>
         <p class="text-xs text-cocoa-400 mt-1" x-text="o.hp"></p>
         <p class="text-xs text-cocoa-400 mt-3 leading-relaxed" x-text="o.alamat"></p>
-        <div x-show="o.metode === 'J&T'" class="mt-4 pt-4 border-t border-cream-200">
-          <p class="text-[11px] text-cocoa-300 mb-1">Nomor resi</p>
+        <div x-show="o.resi && o.resi !== '-'" class="mt-4 pt-4 border-t border-cream-200">
+          <p class="text-[11px] text-cocoa-300 mb-1">Nomor resi pengiriman</p>
           <p class="font-medium text-cocoa-700 text-sm flex items-center gap-2">
-            <span x-text="o.resi !== '-' ? o.resi : 'Belum tersedia'"></span>
-            <button type="button" x-show="o.resi !== '-'" @click="toast('Nomor resi disalin.','success')" class="icon-btn !w-9 !h-9 tap" aria-label="Salin nomor resi"><i data-lucide="copy" class="w-4 h-4"></i></button>
+            <span x-text="o.resi"></span>
+            <button type="button" @click="toast('Nomor resi disalin.','success')" class="icon-btn !w-9 !h-9 tap" aria-label="Salin nomor resi"><i data-lucide="copy" class="w-4 h-4"></i></button>
           </p>
         </div>
       </div>
 
       <div class="card p-6">
         <h2 class="font-display font-bold text-cocoa-700 mb-4">Pembayaran</h2>
-        <p class="text-sm text-cocoa-500 mb-3" x-text="o.bayar"></p>
-        <div class="rounded-2xl border border-cream-200 p-4 flex items-center gap-3">
-          <span class="grid place-items-center w-11 h-11 rounded-xl bg-cream-100 text-cocoa-400 shrink-0"><i data-lucide="receipt" class="w-5 h-5"></i></span>
-          <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-cocoa-700">bukti-transfer.jpg</p>
-            <p class="text-[11px] text-cocoa-300" x-text="o.status === 'menunggu' ? 'Menunggu verifikasi admin' : 'Sudah diverifikasi'"></p>
+        <p class="text-sm text-cocoa-500 mb-3 font-semibold" x-text="o.bayar"></p>
+        
+        <!-- JIKA TRANSFER BANK -->
+        <template x-if="o.bayar !== 'Bayar di Tempat'">
+          <div>
+            <template x-if="o.bukti">
+              <div class="rounded-2xl border border-cream-200 p-4 flex items-center gap-3">
+                <span class="grid place-items-center w-14 h-14 rounded-xl bg-cream-100 text-cocoa-400 shrink-0 overflow-hidden border border-cream-200 cursor-pointer hover:opacity-80 transition" onclick="window.open(this.querySelector('img').src, '_blank')">
+                    <img :src="o.bukti" alt="Bukti Transfer" class="w-full h-full object-cover">
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-cocoa-700 truncate">Bukti Transfer</p>
+                  <p class="text-[11px] text-cocoa-300" x-text="o.status === 'menunggu' ? 'Menunggu verifikasi admin' : 'Sudah diverifikasi'"></p>
+                </div>
+              </div>
+            </template>
+
+            <template x-if="!o.bukti">
+              <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4 flex items-center gap-3">
+                <span class="grid place-items-center w-11 h-11 rounded-xl bg-rose-100 text-rose-500 shrink-0"><i data-lucide="alert-circle" class="w-5 h-5"></i></span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm font-medium text-rose-700 truncate">Menunggu Pembayaran</p>
+                  <p class="text-[11px] text-rose-500/80">Belum ada bukti yang diunggah</p>
+                </div>
+              </div>
+            </template>
           </div>
-        </div>
+        </template>
+
+        <!-- JIKA BAYAR DI TEMPAT (COD / AMBIL TOKO) -->
+        <template x-if="o.bayar === 'Bayar di Tempat'">
+          <div class="rounded-2xl border border-cream-200 bg-cream-50 p-4 flex items-center gap-3">
+            <span class="grid place-items-center w-11 h-11 rounded-xl bg-cream-200 text-gold-600 shrink-0"><i data-lucide="banknote" class="w-5 h-5"></i></span>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-cocoa-700 truncate">Bayar di Tempat</p>
+              <p class="text-[11px] text-cocoa-400">Dibayarkan saat pesanan diterima/diambil</p>
+            </div>
+          </div>
+        </template>
       </div>
 
       <div class="card p-6 space-y-2">
@@ -133,7 +167,7 @@
         <a x-show="o.status === 'selesai'" :href="'{{ url('/review') }}/' + o.kode" class="btn btn-gold btn-block">
           <i data-lucide="star" class="w-4 h-4"></i> Beri review
         </a>
-        <button @click="toast('Struk pesanan disiapkan untuk diunduh (simulasi).','info')" class="btn btn-ghost btn-block">
+        <button @click="toast('Struk pesanan disiapkan untuk diunduh.','info')" class="btn btn-ghost btn-block">
           <i data-lucide="download" class="w-4 h-4"></i> Unduh struk
         </button>
       </div>
@@ -143,17 +177,174 @@
 @endsection
 
 @push('scripts')
+@php
+    $o = $order;
+    $calculatedTotal = 0;
+
+    $mappedItems = $o->items->map(function($it) use (&$calculatedTotal) {
+        $product = $it->product;
+        
+        $fotoDb = $product ? $product->photo_main : null;
+        if (!$fotoDb && $product && $product->photos) {
+            $photosArr = is_string($product->photos) ? json_decode($product->photos, true) : $product->photos;
+            if (is_array($photosArr) && count($photosArr) > 0) {
+                $fotoDb = $photosArr[0];
+            }
+        }
+        $foto = $fotoDb ? asset('storage/' . $fotoDb) : asset('assets/img/products/placeholder.svg');
+
+        $harga = (int) ($it->price ?: ($product ? $product->price : 0));
+        $qty = (int) ($it->quantity ?: 1);
+        $calculatedTotal += ($harga * $qty);
+
+        return [
+            'id' => $it->id,
+            'nama' => $it->product_name ?? ($product ? $product->name : 'Produk Terhapus'),
+            'slug' => $product ? $product->slug : 'produk',
+            'qty' => $qty,
+            'harga' => $harga,
+            'varian' => $it->variant ?? 'Original',
+            'foto' => $foto
+        ];
+    })->values()->all();
+
+    $tglKirimRaw = $o->delivery_date ?? $o->shipping_date ?? $o->pickup_delivery_date ?? $o->pickup_date;
+    $tglKirimFix = $tglKirimRaw ? \Carbon\Carbon::parse($tglKirimRaw)->format('Y-m-d') : ($o->created_at ? \Carbon\Carbon::parse($o->created_at)->addDays(2)->format('Y-m-d') : '-');
+
+    $metodeRaw = strtolower($o->delivery_method ?? '');
+    $metode_pengiriman = (str_contains($metodeRaw, 'jnt') || str_contains($metodeRaw, 'j&t')) ? 'Dikirim via J&T Express' : 'Ambil di tempat';
+    
+    $alamat = $metode_pengiriman === 'Ambil di tempat' 
+                ? 'Ambil di toko — Jl. Samudera No. 12, Banda Sakti, Lhokseumawe' 
+                : ($o->delivery_address ?? 'Alamat tidak ditemukan');
+
+    // ==========================================
+    // ALGORITMA SCANNER PEMBAYARAN & LOGIKA CERDAS
+    // ==========================================
+    $payMethodRaw = $o->payment_method ?? $o->metode_pembayaran ?? $o->metode_bayar ?? null;
+    $isTunai = false;
+    $isTransfer = false;
+    $bankName = '';
+
+    if ($payMethodRaw) {
+        $valLower = strtolower($payMethodRaw);
+        if (preg_match('/tunai|cash|tempat|cod|toko/', $valLower)) $isTunai = true;
+        elseif (preg_match('/bca/', $valLower)) { $isTransfer = true; $bankName = ' BCA'; }
+        elseif (preg_match('/mandiri/', $valLower)) { $isTransfer = true; $bankName = ' Mandiri'; }
+        elseif (preg_match('/bsi/', $valLower)) { $isTransfer = true; $bankName = ' BSI'; }
+        else { $isTransfer = true; } // Jika ada teks tapi tidak spesifik, anggap transfer
+    } else {
+        // SCAN AGRESSIF: Pindai semua kolom untuk mencari kata kunci pembayaran
+        foreach ($o->getAttributes() as $key => $val) {
+            if (!empty($val) && is_string($val)) {
+                $valLower = strtolower($val);
+                // Abaikan kolom yang mungkin berisi nama atau alamat
+                if (in_array($key, ['customer_name', 'delivery_address', 'customer_phone', 'notes'])) continue;
+                
+                if (preg_match('/tunai|cash|tempat|cod|bayar_di_toko/', $valLower)) {
+                    $isTunai = true; break;
+                }
+                if (preg_match('/bca|mandiri|bsi/', $valLower, $matches)) {
+                    $isTransfer = true; $bankName = ' ' . strtoupper($matches[0]); break;
+                }
+            }
+        }
+    }
+
+    if ($isTunai) {
+        $bayarText = 'Bayar di Tempat';
+    } elseif ($isTransfer) {
+        $bayarText = 'Transfer' . $bankName;
+    } else {
+        // LOGIKA CERDAS: Jika pembayaran masih kosong, 
+        // dan metode kirimnya "Ambil di tempat", asumsikan "Bayar di Tempat"
+        if ($metode_pengiriman === 'Ambil di tempat') {
+            $bayarText = 'Bayar di Tempat';
+        } else {
+            $bayarText = 'Transfer Bank'; // Final fallback
+        }
+    }
+
+    $statusMap = [
+        'menunggu_pembayaran' => 'menunggu',
+        'menunggu_konfirmasi' => 'menunggu',
+        'diproses' => 'diproses',
+        'siap_diambil' => 'dikemas',
+        'dikemas' => 'dikemas',
+        'dikirim' => 'dikirim',
+        'selesai' => 'selesai',
+        'dibatalkan' => 'dibatalkan'
+    ];
+    $statusMentah = strtolower($o->status ?? 'menunggu_pembayaran');
+    $statusJS = $statusMap[$statusMentah] ?? 'menunggu';
+
+    $buktiUrl = null;
+    
+    // MENCEGAH PENCARIAN GAMBAR BUKTI JIKA METODENYA BAYAR DI TEMPAT
+    if ($bayarText !== 'Bayar di Tempat') {
+        $kolomUmum = ['payment_proof', 'bukti_pembayaran', 'bukti_bayar', 'receipt', 'struk', 'bukti_tf', 'photo', 'image'];
+        foreach ($kolomUmum as $col) {
+            if (!empty($o->$col)) {
+                $val = $o->$col;
+                $buktiUrl = str_starts_with($val, 'http') ? $val : asset('storage/' . $val);
+                break;
+            }
+        }
+        if (!$buktiUrl) {
+            foreach ($o->getAttributes() as $key => $val) {
+                if (is_string($val) && preg_match('/\.(jpg|jpeg|png|webp|pdf)$/i', $val)) {
+                    $buktiUrl = str_starts_with($val, 'http') ? $val : asset('storage/' . $val);
+                    break;
+                }
+            }
+        }
+    }
+
+    $totalAkhir = (int) ($o->total_amount ?? $o->total ?? 0);
+    $ongkir = (int) ($o->shipping_fee ?? $o->shipping_cost ?? 0);
+    $kemasan = (int) ($o->packaging_fee ?? $o->packaging_cost ?? 0);
+    if ($totalAkhir === 0) {
+        $totalAkhir = $calculatedTotal + $ongkir + $kemasan;
+    }
+
+    $mappedOrder = [
+        'kode' => $o->order_number ?? 'PESANAN',
+        'pelanggan' => $o->customer_name ?? 'Pelanggan',
+        'hp' => $o->customer_phone ?? '-',
+        'tanggal' => $o->created_at ? \Carbon\Carbon::parse($o->created_at)->format('Y-m-d') : '-',
+        'jamPesan' => $o->created_at ? \Carbon\Carbon::parse($o->created_at)->format('H:i') : '-',
+        'ambil' => $tglKirimFix,
+        'jam' => $o->delivery_time ?? $o->pickup_delivery_slot ?? 'Pagi/Siang',
+        'metode' => $metode_pengiriman,
+        'status' => $statusJS,
+        'total' => $totalAkhir,
+        'ongkir' => $ongkir,
+        'kemasan' => $kemasan,
+        'bayar' => $bayarText,
+        'bukti' => $buktiUrl,
+        'alamat' => $alamat,
+        'resi' => $o->tracking_number && $o->tracking_number !== '-' ? $o->tracking_number : null,
+        'catatan' => $o->notes ?? $o->catatan ?? '',
+        'items' => $mappedItems
+    ];
+@endphp
+
 <script>
-  const SEMUA = semuaPesanan();
-  // Menyuntikkan kode dari Laravel langsung ke JavaScript
-  const KODE = "{{ $kode }}";
-  const ORDER = SEMUA.find(o => o.kode === KODE) || SEMUA[0];
+  const ORDER = @json($mappedOrder);
 
   function detailPesanan() {
     return {
-      o: ORDER, STATUS_PESANAN,
-      init() { document.title = ORDER.kode + ' · 4G Cake & Cookies'; this.$nextTick(() => icons()); },
-      get timeline() { return timelinePesanan(this.o, true); }
+      o: ORDER, 
+      init() { 
+          document.title = this.o.kode + ' · 4G Cake & Cookies'; 
+          this.$nextTick(() => { if(typeof icons === 'function') icons() }); 
+      },
+      get timeline() { 
+          if(typeof timelinePesanan === 'function') {
+              return timelinePesanan(this.o, true); 
+          }
+          return [];
+      }
     };
   }
 </script>

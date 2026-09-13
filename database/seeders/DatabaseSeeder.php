@@ -28,6 +28,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'), 
             'role' => 'admin']);
 
+        //aing
+        User::create(['name' => 'Admin Operasional', 
+            'email' => 'rrendi6923@gmail.com', 
+            'phone' => '082119992162', 
+            'password' => Hash::make('admin123'), 
+            'role' => 'owner']);
+
         // 2. Kategori Master
         $kategori = [
             'Cake' => Category::create(['name' => 'Cake', 'slug' => 'cake']),

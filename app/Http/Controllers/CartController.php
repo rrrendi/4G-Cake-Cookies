@@ -2,126 +2,129 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    // Menampilkan isi keranjang (Fase selanjutnya)
     public function index()
     {
-        $cart = session()->get('cart', []);
-        return view('keranjang', compact('cart'));
+        return view('keranjang');
     }
 
-    // Memasukkan produk ke dalam session keranjang
     public function store(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'qty' => 'required|integer|min:1',
-            'variant' => 'nullable|string',
-            'action' => 'required|string|in:cart,checkout'
+            'qty' => 'nullable|integer|min:1',
+            'variant' => 'nullable|string'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
-        
-        if ($product->stock_status === 'habis') {
-            if ($request->wantsJson()) {
-                return response()->json(['status' => 'error', 'message' => $product->name . ' sedang kehabisan stok.']);
+        $product = Product::with('category')->findOrFail($request->product_id);
+        $qty = (int) ($request->qty ?? 1);
+        $variant = $request->variant ?? 'Original';
+        $cartKey = $product->id . '_' . $variant;
+
+        $hargaFinal = (int) $product->price;
+        $varianProduk = is_string($product->variant_options) ? json_decode($product->variant_options, true) : $product->variant_options;
+
+        if (is_array($varianProduk)) {
+            foreach ($varianProduk as $v) {
+                if (is_array($v) && isset($v['name']) && isset($v['price'])) {
+                    if (strtolower(trim($v['name'])) === strtolower(trim($variant))) {
+                        $hargaFinal = (int) $v['price'];
+                        break;
+                    }
+                }
             }
-            return redirect()->back()->with('error_toast', $product->name . ' sedang kehabisan stok.');
         }
-
-        $cart = session()->get('cart', []);
-        $cartKey = $product->id . '-' . ($request->variant ?: 'default');
-
-        if (isset($cart[$cartKey])) {
-            $cart[$cartKey]['qty'] += $request->qty;
-        } else {
-            $cart[$cartKey] = [
-                'product_id' => $product->id,
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'qty' => $request->qty,
-                'price' => $product->price,
-                'variant' => $request->variant,
-                'photo' => $product->photo_main,
-                'weight' => $product->weight_label,
-                'po_days' => $product->min_preorder_days
-            ];
-        }
-
-        session()->put('cart', $cart);
         
-        // Hitung total kuantitas item di keranjang
-        $cartCount = collect($cart)->sum('qty');
+        if ($hargaFinal === (int) $product->price && $request->has('price')) {
+             $hargaFinal = (int) $request->price;
+        }
 
-        // Jika request berasal dari JavaScript (AJAX), balas tanpa refresh
-        if ($request->wantsJson()) {
+        $itemData = [
+            'product_id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'price' => $hargaFinal, 
+            'qty' => $qty,
+            'quantity' => $qty,
+            'po_days' => (int) ($product->min_preorder_days ?? 2),
+            'min_po' => (int) ($product->min_preorder_days ?? 2),
+            'variant' => $variant,
+            'photo' => $product->photo_main,
+            'kategori' => $product->category ? $product->category->name : 'Produk',
+        ];
+
+        // ===============================================
+        // KUNCI PERBAIKAN: PISAHKAN JALUR BUY NOW DAN CART
+        // ===============================================
+        if ($request->action === 'buy_now') {
+            // Hapus sesi buy_now lama (jika ada), lalu buat yang baru
+            session()->forget('buy_now');
+            session()->put('buy_now', [$cartKey => $itemData]);
+            
             return response()->json([
-                'status' => 'success', 
-                'message' => $request->qty . 'x ' . $product->name . ' berhasil ditambahkan.',
-                'cart_count' => $cartCount
+                'status' => 'success',
+                'redirect' => route('checkout.index')
             ]);
         }
 
-        if ($request->action === 'checkout') {
-            return redirect()->route('cart.index')->with('info_toast', 'Menuju halaman checkout...');
-        }
-
-        return redirect()->back()->with('success_toast', $request->qty . 'x ' . $product->name . ' masuk ke keranjang.');
-    }
-
-    // Menghapus satu item dari keranjang
-    public function destroy(Request $request)
-    {
-        $cartKey = $request->cart_key;
+        // JIKA ACTION: CART (Masuk ke keranjang asli)
         $cart = session()->get('cart', []);
-
+        
         if (isset($cart[$cartKey])) {
-            $name = $cart[$cartKey]['name'];
-            unset($cart[$cartKey]);
-            session()->put('cart', $cart);
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => $name . ' dihapus dari keranjang.',
-                    'cart_count' => collect($cart)->sum('qty')
-                ]);
-            }
-            return redirect()->back()->with('success_toast', $name . ' dihapus dari keranjang.');
+            $cart[$cartKey]['qty'] += $qty;
+            $cart[$cartKey]['quantity'] = $cart[$cartKey]['qty'];
+            $cart[$cartKey]['price'] = $hargaFinal;
+        } else {
+            $cart[$cartKey] = $itemData;
         }
 
-        return redirect()->back()->with('error_toast', 'Produk tidak ditemukan di keranjang.');
+        session()->put('cart', $cart);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => $qty . 'x ' . $product->name . ' berhasil ditambahkan.',
+                'cart_count' => collect($cart)->sum('qty')
+            ]);
+        }
+
+        return back()->with('success_toast', 'Produk berhasil ditambahkan ke keranjang.');
     }
 
-    // Mengubah jumlah (qty) item di keranjang
     public function update(Request $request)
     {
-        $cartKey = $request->cart_key;
-        $qty = (int) $request->qty;
+        $cartKey = $request->input('cart_key') ?? $request->json('cart_key');
+        $qty = (int) ($request->input('qty') ?? $request->json('qty'));
         $cart = session()->get('cart', []);
 
-        if (isset($cart[$cartKey])) {
-            if ($qty <= 0) {
-                // Jika qty di-set 0, hapus item
-                unset($cart[$cartKey]);
-            } else {
-                $cart[$cartKey]['qty'] = $qty;
-            }
+        if ($cartKey && isset($cart[$cartKey])) {
+            $cart[$cartKey]['qty'] = max(1, $qty);
+            $cart[$cartKey]['quantity'] = max(1, $qty);
             session()->put('cart', $cart);
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'status' => 'success',
-                    'cart_count' => collect($cart)->sum('qty')
-                ]);
-            }
-            return redirect()->back();
+            return response()->json(['status' => 'success']);
         }
 
-        return response()->json(['status' => 'error'], 404);
+        return response()->json(['status' => 'error', 'message' => 'Item tidak ditemukan'], 400);
+    }
+
+    public function destroy(Request $request)
+    {
+        $cartKey = $request->input('cart_key') ?? $request->json('cart_key');
+        $cart = session()->get('cart', []);
+
+        if ($cartKey && isset($cart[$cartKey])) {
+            unset($cart[$cartKey]);
+            session()->put('cart', $cart);
+            return response()->json(['status' => 'success', 'message' => 'Item dihapus']);
+        } elseif (!$cartKey) {
+            session()->forget('cart');
+            return response()->json(['status' => 'success', 'message' => 'Keranjang dikosongkan']);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Gagal menghapus item'], 400);
     }
 }

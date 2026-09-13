@@ -36,11 +36,10 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-[68px] items-center justify-between gap-4">
 
-        <!-- LOGO -->
-        <a href="{{ route('home') }}" class="flex items-center gap-3 shrink-0 group">
-          <span
-            class="grid place-items-center w-10 h-10 rounded-2xl bg-rose-500 text-white font-display font-bold text-sm shadow-[0_8px_18px_-8px_rgba(197,104,104,.9)] group-hover:scale-105 transition">4G</span>
-          <span class="leading-tight">
+        <!-- LOGO NAVBAR PELANGGAN -->
+        <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 group py-1 outline-none focus-visible:ring-2 focus-visible:ring-rose-400 rounded-lg">
+          <img src="{{ asset('assets/img/logo_4g.png') }}" alt="Logo 4G" class="h-10 sm:h-12 w-auto object-contain transition duration-300 group-hover:scale-105">
+          <span class="leading-tight hidden sm:block">
             <span class="block font-display font-bold text-[15px] text-cocoa-700">4G Cake &amp; Cookies</span>
             <span class="block text-[11px] text-cocoa-300 tracking-wide">Homemade sejak 2019</span>
           </span>

@@ -4,62 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // KUNCI PERBAIKAN: Fungsi Index untuk Halaman Admin (Hitung Terjual Real-Time)
     public function index()
     {
-        //
+        // 1. Ambil semua produk beserta kategorinya
+        $products = Product::with('category')->get();
+
+        // 2. Hitung jumlah barang terjual dari tabel order_items yang tergabung dengan pesanan berstatus "selesai"
+        foreach ($products as $product) {
+            $terjual = DB::table('order_items')
+                ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                ->where('order_items.product_id', $product->id)
+                ->where('orders.status', 'selesai')
+                ->sum('order_items.quantity');
+                
+            $product->sold_count = (int) $terjual;
+        }
+
+        // 3. Kirim variabel ke halaman Manajemen Produk (Blade)
+        return view('admin.produk', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($slug)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-        //
+        // 1. Ambil detail produk utama
+        $product = Product::with('category')->where('slug', $slug)->firstOrFail();
+        
+        // 2. Ambil 4 produk acak lainnya (sebagai related products / "sering dipesan bersamaan")
+        $relatedProducts = Product::with('category')
+            ->where('id', '!=', $product->id)
+            ->where('stock_status', 'tersedia')
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+            
+        // 3. Kirim kedua variabel ke file view
+        return view('product-detail', compact('product', 'relatedProducts'));
     }
 }

@@ -9,32 +9,43 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained();
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->string('name', 150);
-            $table->string('slug', 160)->unique();
+            $table->string('slug')->unique();
             $table->text('description');
+            
+            // Info Ekstra Produk
             $table->text('ingredients')->nullable();
-            $table->text('storage_note')->nullable();
             $table->string('weight_label', 60)->nullable();
-            $table->decimal('price', 12, 2);
-            $table->decimal('compare_at_price', 12, 2)->nullable();
-            $table->boolean('is_preorder')->default(true);
-            $table->unsignedSmallInteger('min_preorder_days')->default(0);
+            $table->string('storage_note')->nullable();
+            $table->string('delivery_info')->nullable()->default('J&T / ambil sendiri');
+            $table->string('condition_info')->nullable()->default('Dibuat setelah dipesan');
+            
+            // Harga & Varian Dinamis
+            $table->integer('price')->default(0); // Harga dasar (paling murah)
+            $table->integer('compare_at_price')->nullable();
+            $table->json('variant_options')->nullable(); // Simpan dalam bentuk JSON array
+            
+            // Stok & Pre-Order
+            $table->boolean('is_preorder')->default(false);
+            $table->integer('min_preorder_days')->default(0);
             $table->enum('stock_status', ['tersedia', 'habis'])->default('tersedia');
             $table->boolean('is_best_seller')->default(false);
-            $table->json('variant_options')->nullable();
-            $table->string('photo_main', 255)->nullable();
-            $table->decimal('rating_avg', 2, 1)->default(0);
+            
+            // Dukungan Banyak Foto
+            $table->string('photo_main')->nullable();
+            $table->json('photos')->nullable(); // Array path gambar
+            
+            $table->decimal('rating_avg', 3, 2)->default(0);
             $table->integer('rating_count')->default(0);
             $table->integer('sold_count')->default(0);
+            
             $table->timestamps();
             $table->softDeletes();
-            
-            $table->index(['category_id', 'stock_status', 'is_best_seller']);
         });
     }
 

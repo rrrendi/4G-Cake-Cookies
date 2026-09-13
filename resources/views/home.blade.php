@@ -3,40 +3,18 @@
 @section('content')
   <!-- HERO -->
   <section class="relative overflow-hidden">
-    <!-- HERO BACKGROUND ATMOSPHERE -->
     <div class="hero-bg" aria-hidden="true">
-
-      <!-- Base gradient -->
       <div class="hero-bg-base"></div>
-
-      <!-- Soft light blobs -->
       <div class="hero-orb hero-orb-1"></div>
       <div class="hero-orb hero-orb-2"></div>
       <div class="hero-orb hero-orb-3"></div>
-
-      <!-- Decorative rings -->
       <div class="hero-ring hero-ring-1"></div>
       <div class="hero-ring hero-ring-2"></div>
-
-      <!-- Floating particles -->
       <div class="hero-particles">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
-
-      <!-- Soft decorative wave -->
       <div class="hero-wave"></div>
-
     </div>
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
@@ -52,7 +30,7 @@
           <p class="font-display font-semibold text-rose-600 text-lg mb-3">Dibuat dengan rasa, dikemas dengan cinta.</p>
           <p class="text-cocoa-400 text-base sm:text-lg leading-relaxed max-w-lg mb-8">
             Cake, cookies, brownies, dan dessert box yang dipanggang dalam batch kecil.
-            Pesan online, pilih tanggal ambil atau kirim, dan pantau statusnya sampai sampai di tangan.
+            Pesan online, pilih tanggal ambil atau kirim, dan pantau statusnya sampai di tangan.
           </p>
           <div class="flex flex-wrap gap-3 mb-10">
             <a href="{{ route('catalog') }}" class="btn btn-primary btn-lg">
@@ -88,9 +66,8 @@
               class="w-full drop-shadow-[0_30px_60px_rgba(60,42,33,.18)]">
             <div
               class="absolute top-6 -left-2 sm:left-0 bg-rose-500 border border-rose-400 shadow-xl rounded-2xl px-4 py-3 flex items-center gap-3 text-white animate-[fade-up_.6s_ease_both]">
-              <span class="grid place-items-center w-9 h-9 rounded-xl bg-white/20 text-white">
-                <i data-lucide="clock" class="w-4 h-4"></i>
-              </span>
+              <span class="grid place-items-center w-9 h-9 rounded-xl bg-white/20 text-white"><i data-lucide="clock"
+                  class="w-4 h-4"></i></span>
               <div class="leading-tight">
                 <p class="text-[11px] text-white/75">Pre-order</p>
                 <p class="text-sm font-semibold text-white">Mulai H-1</p>
@@ -98,9 +75,8 @@
             </div>
             <div
               class="absolute bottom-10 -right-2 sm:right-0 bg-cocoa-700 border border-cocoa-600 shadow-xl rounded-2xl px-4 py-3 flex items-center gap-3 text-white">
-              <span class="grid place-items-center w-9 h-9 rounded-xl bg-gold-400/20 text-gold-400">
-                <i data-lucide="truck" class="w-4 h-4"></i>
-              </span>
+              <span class="grid place-items-center w-9 h-9 rounded-xl bg-gold-400/20 text-gold-400"><i data-lucide="truck"
+                  class="w-4 h-4"></i></span>
               <div class="leading-tight">
                 <p class="text-[11px] text-white/60">Pengiriman</p>
                 <p class="text-sm font-semibold text-white">J&amp;T &amp; ambil di tempat</p>
@@ -167,7 +143,6 @@
       <a href="{{ route('catalog') }}" class="btn btn-ghost btn-sm">Lihat semua <i data-lucide="arrow-right"
           class="w-4 h-4"></i></a>
     </div>
-    <!-- GRID PRODUK DARI DATABASE -->
     <div id="grid-best" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"></div>
   </section>
 
@@ -269,26 +244,37 @@
     </div>
   </section>
 
-  <!-- TESTIMONI -->
-  <section class="bg-cocoa-700 text-cream-100">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+  <!-- TESTIMONI (SLIDER OTOMATIS & DRAGGABLE SEAMLESS) -->
+  <section class="bg-cocoa-700 text-cream-100 py-14 sm:py-20 overflow-hidden">
+    <!-- Pembungkus Judul -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Kata mereka yang sudah pesan</h2>
-          <p class="text-cream-200/60 text-sm">Ulasan diambil dari pesanan yang sudah selesai.</p>
+          <p class="text-cream-200/60 text-sm">Ulasan ditarik otomatis dari pesanan yang sudah selesai.</p>
         </div>
-        <button onclick="toast('Halaman ulasan menyusul.', 'info')" class="btn btn-gold btn-sm self-start">Tulis ulasan
-          Anda</button>
+        <a href="{{ route('order.history') }}" class="btn btn-gold btn-sm self-start shrink-0">Tulis ulasan Anda</a>
       </div>
-      <div id="grid-testimoni" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
+    </div>
+
+    <!-- Wadah Edge-to-Edge (Tanpa pembatas px) -->
+    <div class="w-full">
+      <div id="grid-testimoni" class="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar cursor-grab items-stretch pb-8"
+        style="scroll-behavior: auto;">
+        <!-- Ulasan akan diinjeksi lewat JavaScript -->
+      </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-4 sm:pb-6 -mb-6">
     <div
-      class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blush-100 via-cream-100 to-cream-200 border border-cream-200 p-8 sm:p-12 lg:p-16 text-center">
+      class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blush-100 via-cream-100 to-cream-200 border border-cream-200 p-8 sm:p-12 lg:p-16 text-center flex flex-col items-center">
       <div class="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-white/50 blur-2xl"></div>
+
+      <img src="{{ asset('assets/img/logo_4g.png') }}" alt="Logo 4G"
+        class="h-16 w-auto object-contain mb-6 drop-shadow-md">
+
       <div class="relative">
         <span class="badge badge-rose mb-4"><i data-lucide="calendar-heart" class="w-3.5 h-3.5"></i> Slot minggu ini masih
           tersedia</span>
@@ -300,14 +286,12 @@
         </p>
         <div class="flex flex-wrap justify-center gap-3">
           <a href="{{ route('catalog') }}" class="btn btn-primary btn-lg">Pesan sekarang</a>
-          <button onclick="toast('Halaman Riwayat Pesanan menyusul.', 'info')"
-            class="btn btn-outline btn-lg bg-white/60">Lacak pesanan saya</button>
+          <a href="{{ route('order.history') }}" class="btn btn-outline btn-lg bg-white/60">Lacak pesanan saya</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FORM ADD TO CART TERSEMBUNYI (PENGHUBUNG KE LARAVEL) -->
   <form id="form-cart-laravel" action="{{ route('cart.store') }}" method="POST" class="hidden">
     @csrf
     <input type="hidden" name="product_id" id="cart-product-id">
@@ -319,158 +303,356 @@
 @endsection
 
 @push('scripts')
-  <script>
+@php
+    $cols = \Illuminate\Support\Facades\Schema::hasTable('reviews') ? \Illuminate\Support\Facades\Schema::getColumnListing('reviews') : [];
+    $hasStatus = in_array('status', $cols);
+    $ratingCol = in_array('rating_overall', $cols) ? 'rating_overall' : (in_array('rating', $cols) ? 'rating' : (in_array('bintang', $cols) ? 'bintang' : 'rating_overall'));
 
-    (() => {
-      const heroBg = document.querySelector('.hero-bg');
+    $realBestSellers = \App\Models\Product::with('category')
+        ->where('is_best_seller', 1)
+        ->orWhere('is_best_seller', true)
+        ->latest()
+        ->take(4)
+        ->get();
+        
+    $mappedHomeBestSellers = $realBestSellers->map(function($p) use ($hasStatus, $ratingCol) {
+        $terjualAsli = \Illuminate\Support\Facades\DB::table('order_items')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('order_items.product_id', $p->id)
+            ->where('orders.status', 'selesai')
+            ->sum('order_items.quantity');
 
-      if (!heroBg) return;
+        $ulasanCount = 0;
+        $ulasanAvg = 0;
 
-      let ticking = false;
+        if (\Illuminate\Support\Facades\Schema::hasTable('reviews')) {
+            $reviewsQuery = \Illuminate\Support\Facades\DB::table('reviews')
+                ->join('order_items', 'reviews.order_item_id', '=', 'order_items.id')
+                ->where('order_items.product_id', $p->id);
 
-      const updateHeroBackground = () => {
-        const scrollY = Math.min(window.scrollY, 900);
+            if ($hasStatus) {
+                try { $reviewsQuery->where('reviews.status', 'approved'); } catch(\Exception $e) {}
+            }
 
-        heroBg.style.setProperty('--scroll-y', `${scrollY}px`);
-
-        ticking = false;
-      };
-
-      window.addEventListener('scroll', () => {
-
-        if (!ticking) {
-          window.requestAnimationFrame(updateHeroBackground);
-          ticking = true;
+            $ulasanCount = $reviewsQuery->count();
+            $ulasanAvg = $ulasanCount > 0 ? $reviewsQuery->avg($ratingCol) : 0;
         }
 
-      }, { passive: true });
+        $photosDb = $p->photos;
+        if (is_string($photosDb)) $photosDb = json_decode($photosDb, true);
+        if (!is_array($photosDb) || empty($photosDb)) $photosDb = $p->photo_main ? [$p->photo_main] : [];
+        $foto = !empty($photosDb) ? asset('storage/' . $photosDb[0]) : asset('assets/img/products/placeholder.svg');
 
-      updateHeroBackground();
+        $varian = $p->variant_options;
+        if (is_string($varian)) $varian = json_decode($varian, true);
+        if (!is_array($varian) || empty($varian)) {
+            $varian = [['name' => 'Original', 'price' => $p->price]];
+        } else {
+            if (isset($varian[0]) && !is_array($varian[0])) {
+                $newVar = []; foreach ($varian as $vStr) $newVar[] = ['name' => $vStr, 'price' => $p->price];
+                $varian = $newVar;
+            }
+        }
+
+        return [
+            'id' => $p->id, 'slug' => $p->slug, 'nama' => $p->name,
+            'kategori' => $p->category ? $p->category->name : 'Uncategorized',
+            'berat' => $p->weight_label ?? '500 gram', 'harga' => (int) $varian[0]['price'],
+            'hargaCoret' => $p->compare_at_price ? (int) $p->compare_at_price : null,
+            'stok' => $p->stock_status ?? 'tersedia', 'po' => (int) ($p->min_preorder_days ?? 2),
+            'bestSeller' => (bool) $p->is_best_seller,
+            'rating' => (float) $ulasanAvg,     
+            'ulasan' => (int) $ulasanCount,     
+            'terjual' => (int) $terjualAsli,    
+            'foto' => $foto, 'varian' => $varian
+        ];
+    })->values()->all();
+
+    $realTestimonials = [];
+    if (\Illuminate\Support\Facades\Schema::hasTable('reviews')) {
+        $testiQuery = \Illuminate\Support\Facades\DB::table('reviews')
+            ->join('order_items', 'reviews.order_item_id', '=', 'order_items.id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->leftJoin('users', 'reviews.user_id', '=', 'users.id')
+            ->where($ratingCol, '>=', 4)
+            ->select('reviews.*', 'users.name as user_name', 'products.name as product_name')
+            ->orderBy('reviews.created_at', 'desc')
+            ->take(15);
+
+        if ($hasStatus) {
+            try { $testiQuery->where('reviews.status', 'approved'); } catch(\Exception $e) {}
+        }
+
+        $realTestimonials = $testiQuery->get()->map(function($r) use ($ratingCol) {
+            $teks = $r->comment ?? ($r->komentar ?? ($r->ulasan ?? 'Kue sangat enak!'));
+            $namaPelanggan = $r->user_name ?? 'Pelanggan';
+            
+            // PALET WARNA GRADASI (8 Warna Berbeda)
+            $paletWarna = [
+                'from-rose-400 to-rose-600',
+                'from-blue-400 to-blue-600',
+                'from-emerald-400 to-emerald-600',
+                'from-amber-400 to-amber-600',
+                'from-purple-400 to-purple-600',
+                'from-teal-400 to-teal-600',
+                'from-indigo-400 to-indigo-600',
+                'from-fuchsia-400 to-fuchsia-600',
+            ];
+            
+            // Generate warna unik tapi konsisten per nama pengguna
+            $indeksWarna = abs(crc32($namaPelanggan)) % count($paletWarna);
+            $warnaPilihan = $paletWarna[$indeksWarna];
+
+            return [
+                'nama' => $namaPelanggan,
+                'produk' => $r->product_name,
+                'bintang' => (int) $r->$ratingCol,
+                'teks' => $teks,
+                'avatar' => strtoupper(substr($namaPelanggan, 0, 2)),
+                'warna' => $warnaPilihan // Warna dikirim ke JS
+            ];
+        })->values()->all();
+    }
+@endphp
+
+  <script>
+    (() => {
+      const heroBg = document.querySelector('.hero-bg');
+      if (heroBg) {
+        let ticking = false;
+        const updateHeroBackground = () => {
+          const scrollY = Math.min(window.scrollY, 900);
+          heroBg.style.setProperty('--scroll-y', `${scrollY}px`);
+          ticking = false;
+        };
+        window.addEventListener('scroll', () => {
+          if (!ticking) { window.requestAnimationFrame(updateHeroBackground); ticking = true; }
+        }, { passive: true });
+        updateHeroBackground();
+      }
     })();
-    // Mengambil data Best Seller dari Laravel
-    const BEST_SELLER = {!! json_encode($mappedBestSellers) !!};
-    const JUMLAH_KERANJANG = {{ $cartCount }};
 
-    // Fungsi Kartu Produk Asli
+    const IS_LOGGED_IN = @json(auth()->check());
+    const BEST_SELLER = {!! json_encode($mappedHomeBestSellers) !!};
+    const TESTIMONI_ASLI = {!! json_encode($realTestimonials) !!};
+    const JUMLAH_KERANJANG = {{ $cartCount ?? 0 }};
+
+    function formatRupiah(n) { return 'Rp' + Number(n || 0).toLocaleString('id-ID'); }
+
     window.kartuProduk = function (p) {
       const habis = p.stok === 'habis';
       const diskon = p.hargaCoret ? Math.round((1 - p.harga / p.hargaCoret) * 100) : 0;
       const urlDetail = `{{ url('/produk') }}/${p.slug}`;
+      const varName = p.varian && p.varian.length > 0 ? p.varian[0].name : 'Original';
 
       return `
-                <article class="card card-hover overflow-hidden flex flex-col group h-full">
-                  <a href="${urlDetail}" class="relative block aspect-[4/3] overflow-hidden bg-cream-100"
-                     aria-label="Lihat detail ${p.nama}">
-                    <img src="${imgProduk(p.slug)}" alt="${p.nama}" loading="lazy"
-                         class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.06] ${habis ? 'grayscale opacity-70' : ''}">
-                    <span class="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
-                      ${p.bestSeller ? '<span class="badge badge-gold shadow-sm"><i data-lucide="flame" class="w-3 h-3"></i> Best Seller</span>' : ''}
-                      ${diskon ? `<span class="badge badge-rose shadow-sm">Hemat ${diskon}%</span>` : ''}
-                    </span>
-                    ${habis ? '<span class="absolute inset-x-0 bottom-0 bg-cocoa-700/85 text-white text-xs font-semibold text-center py-2">Stok Habis &mdash; buka PO minggu depan</span>' : ''}
-                  </a>
-                  <div class="p-4 sm:p-5 flex flex-col flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="badge badge-neutral">${p.kategori}</span>
-                      <span class="flex items-center gap-1 text-xs text-cocoa-400">
-                        <i data-lucide="star" class="w-3.5 h-3.5 star fill-current"></i>${p.rating.toFixed(1)}
-                        <span class="text-cocoa-300">(${p.ulasan})</span>
-                      </span>
-                    </div>
-                    <h3 class="font-display font-semibold text-cocoa-700 leading-snug mb-1">
-                      <a href="${urlDetail}" class="hover:text-rose-600 transition">${p.nama}</a>
-                    </h3>
-                    <p class="text-xs text-cocoa-300 mb-3">${p.berat} &middot; PO min. H-${p.po}</p>
-                    <div class="mt-auto">
-                      <div class="flex items-baseline gap-2 mb-3">
-                        <span class="font-display font-bold text-lg text-rose-600">${rp(p.harga)}</span>
-                        ${p.hargaCoret ? `<span class="text-xs text-cocoa-300 line-through">${rp(p.hargaCoret)}</span>` : ''}
-                      </div>
-                      <div class="flex gap-2">
-                        <a href="${urlDetail}" class="btn btn-outline btn-sm flex-1">Detail</a>
-                        ${habis
-          ? `<button type="button" class="btn btn-primary btn-sm flex-1 is-disabled" disabled aria-disabled="true">Habis</button>`
-          : `<button type="button" class="btn btn-primary btn-sm flex-1" onclick="tambahKeranjang('${p.id}', 1, '${p.varian[0] || ''}')" aria-label="Tambah ${p.nama} ke keranjang">
-                               <i data-lucide="plus" class="w-4 h-4"></i> Keranjang</button>`}
-                      </div>
-                    </div>
-                  </div>
-                </article>`;
+        <article class="card card-hover overflow-hidden flex flex-col group h-full">
+          <a href="${urlDetail}" class="relative block aspect-[4/3] overflow-hidden bg-cream-100" aria-label="Lihat detail ${p.nama}">
+            <img src="${p.foto}" onerror="this.onerror=null; this.src='{{ asset('assets/img/products/placeholder.svg') }}';" alt="${p.nama}" loading="lazy" class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.06] ${habis ? 'grayscale opacity-70' : ''}">
+            <span class="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+              ${p.bestSeller ? '<span class="badge badge-gold shadow-sm"><i data-lucide="flame" class="w-3 h-3"></i> Best Seller</span>' : ''}
+              ${diskon ? `<span class="badge badge-rose shadow-sm">Hemat ${diskon}%</span>` : ''}
+            </span>
+            ${habis ? '<span class="absolute inset-x-0 bottom-0 bg-cocoa-700/85 text-white text-xs font-semibold text-center py-2">Stok Habis &mdash; buka PO minggu depan</span>' : ''}
+          </a>
+          <div class="p-4 sm:p-5 flex flex-col flex-1">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="badge badge-neutral">${p.kategori}</span>
+              <span class="flex items-center gap-1 text-xs text-cocoa-400">
+                <i data-lucide="star" class="w-3.5 h-3.5 star fill-current"></i>${parseFloat(p.rating).toFixed(1)}
+                <span class="text-cocoa-300">(${p.ulasan})</span>
+              </span>
+            </div>
+            <h3 class="font-display font-semibold text-cocoa-700 leading-snug mb-1">
+              <a href="${urlDetail}" class="hover:text-rose-600 transition">${p.nama}</a>
+            </h3>
+            <p class="text-xs text-cocoa-300 mb-3">${p.berat} &middot; PO min. H-${p.po}</p>
+            <div class="mt-auto">
+              <div class="flex items-baseline gap-2 mb-3">
+                <span class="font-display font-bold text-lg text-rose-600">${formatRupiah(p.harga)}</span>
+                ${p.hargaCoret ? `<span class="text-xs text-cocoa-300 line-through">${formatRupiah(p.hargaCoret)}</span>` : ''}
+              </div>
+              <div class="flex gap-2">
+                <a href="${urlDetail}" class="btn btn-outline btn-sm flex-1">Detail</a>
+                ${habis
+                  ? `<button type="button" class="btn btn-primary btn-sm flex-1 is-disabled" disabled aria-disabled="true">Habis</button>`
+                  : `<button type="button" class="btn btn-primary btn-sm flex-1" onclick="tambahKeranjang('${p.id}', 1, '${varName}')" aria-label="Tambah ${p.nama} ke keranjang">
+                       <i data-lucide="plus" class="w-4 h-4"></i> Keranjang</button>`}
+              </div>
+            </div>
+          </div>
+        </article>`;
     }
 
-    // Fungsi Tambah Keranjang AJAX
     window.tambahKeranjang = function (id, qty = 1, varian = '') {
+      if (!IS_LOGGED_IN) { window.location.href = '{{ route('login') }}'; return; }
       const form = document.getElementById('form-cart-laravel');
       const csrfToken = form.querySelector('input[name="_token"]').value;
       const url = form.getAttribute('action');
 
+      const btn = event.currentTarget || event.target;
+      const isBtn = btn && btn.tagName === 'BUTTON';
+      const originalText = isBtn ? btn.innerHTML : '';
+      if (isBtn) btn.innerHTML = '<span class="spinner"></span>...';
+
       fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken,
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          product_id: id, qty: qty, variant: varian, action: 'cart'
-        })
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+        body: JSON.stringify({ product_id: id, qty: qty, variant: varian, action: 'cart' })
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            toast(data.message, 'success', 'Masuk keranjang');
-            document.querySelectorAll('[data-cart-badge]').forEach(el => {
-              el.textContent = data.cart_count;
-              el.classList.remove('hidden');
-            });
-          } else {
-            toast(data.message, 'error', 'Gagal');
-          }
-        })
-        .catch(() => toast('Terjadi kesalahan jaringan.', 'error'));
+      .then(response => response.json())
+      .then(data => {
+        if (isBtn) btn.innerHTML = originalText;
+        if (data.status === 'success') {
+          if(typeof toast === 'function') toast(data.message, 'success', 'Masuk keranjang');
+          document.querySelectorAll('[data-cart-badge]').forEach(el => { el.textContent = data.cart_count; el.classList.remove('hidden'); });
+        } else { 
+            if(typeof toast === 'function') toast(data.message, 'error', 'Gagal'); 
+        }
+      }).catch(() => {
+        if (isBtn) btn.innerHTML = originalText;
+        if(typeof toast === 'function') toast('Terjadi kesalahan jaringan.', 'error')
+      });
     };
 
-    /* Render best seller + testimoni dari data dummy (sinkronisasi) */
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Render Best Seller dengan data dari Laravel (Disinkronkan dengan rating Dummy)
-      if (typeof PRODUK !== 'undefined') {
-        BEST_SELLER.forEach(p => {
-          const dataAsli = PRODUK.find(x => x.slug === p.slug);
-          if (dataAsli) {
-            p.rating = dataAsli.rating;
-            p.ulasan = dataAsli.ulasan;
-            p.terjual = dataAsli.terjual; // Tambahkan ini agar angka terjual juga konsisten
-          }
-        });
+      document.getElementById('grid-best').innerHTML = BEST_SELLER.map((p, i) => `<div class="fade-up d-${i + 1}">${kartuProduk(p)}</div>`).join('');
+
+      const slider = document.getElementById('grid-testimoni');
+      if (TESTIMONI_ASLI && TESTIMONI_ASLI.length > 0) {
+          const htmlString = TESTIMONI_ASLI.map(r => `
+              <figure class="w-[280px] sm:w-[350px] shrink-0 flex flex-col justify-between rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm transition-transform hover:-translate-y-1 select-none">
+                <div>
+                  <div class="flex items-center gap-1 mb-3">${typeof starsHTML === 'function' ? starsHTML(r.bintang, 'w-4 h-4 text-gold-400') : ''}</div>
+                  <blockquote class="text-sm leading-relaxed text-cream-200/85 mb-5 line-clamp-2 break-all" title="${r.teks}">&ldquo;${r.teks}&rdquo;</blockquote>
+                </div>
+                <figcaption class="flex items-center gap-3 pt-4 border-t border-white/10 mt-auto">
+                  <!-- PENGGUNAAN WARNA GRADASI DINAMIS UNTUK AVATAR (r.warna) -->
+                  <span class="grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br ${r.warna} shadow-inner text-white text-xs font-bold shrink-0 uppercase ring-2 ring-white/20 pointer-events-none">${r.avatar}</span>
+                  <span class="min-w-0 pointer-events-none">
+                    <span class="block text-sm font-semibold text-white truncate">${r.nama}</span>
+                    <span class="block text-[11px] text-cream-200/50 truncate">${r.produk}</span>
+                  </span>
+                </figcaption>
+              </figure>`).join('');
+
+          const repeatCount = Math.ceil(20 / TESTIMONI_ASLI.length) + 1; 
+          slider.innerHTML = htmlString.repeat(repeatCount);
+
+          let isDown = false;
+          let startX;
+          let scrollLeft;
+          let jumpPoint = 0;
+          let animationId;
+          const setSize = TESTIMONI_ASLI.length;
+          
+          let exactScrollLeft = 0; 
+          const speed = 0.4; 
+
+          setTimeout(() => {
+              const firstItem = slider.children[0];
+              const firstItemOfSet2 = slider.children[setSize];
+              if (firstItem && firstItemOfSet2) {
+                  jumpPoint = firstItemOfSet2.offsetLeft - firstItem.offsetLeft;
+                  exactScrollLeft = slider.scrollLeft;
+                  startAutoScroll();
+              }
+          }, 300);
+
+          const startAutoScroll = () => {
+              if (jumpPoint <= 0) return;
+              const play = () => {
+                  if (!isDown) {
+                      exactScrollLeft += speed;
+                      if (exactScrollLeft >= jumpPoint) {
+                          exactScrollLeft -= jumpPoint;
+                      }
+                      slider.scrollLeft = exactScrollLeft;
+                  }
+                  animationId = requestAnimationFrame(play);
+              };
+              animationId = requestAnimationFrame(play);
+          };
+
+          const stopAutoScroll = () => cancelAnimationFrame(animationId);
+
+          slider.addEventListener('mouseenter', stopAutoScroll);
+          slider.addEventListener('mouseleave', () => {
+              isDown = false;
+              slider.style.cursor = 'grab';
+              startAutoScroll();
+          });
+          
+          slider.addEventListener('mousedown', (e) => {
+              isDown = true;
+              stopAutoScroll();
+              slider.style.cursor = 'grabbing';
+              startX = e.pageX - slider.offsetLeft;
+              scrollLeft = slider.scrollLeft;
+          });
+          
+          slider.addEventListener('mouseup', () => {
+              isDown = false;
+              slider.style.cursor = 'grab';
+              startAutoScroll();
+          });
+          
+          slider.addEventListener('mousemove', (e) => {
+              if (!isDown || jumpPoint <= 0) return;
+              e.preventDefault();
+              const x = e.pageX - slider.offsetLeft;
+              const walk = (x - startX) * 1.5; 
+              let newScroll = scrollLeft - walk;
+
+              if (newScroll <= 0) {
+                  newScroll += jumpPoint;
+                  scrollLeft += jumpPoint;
+              } else if (newScroll >= jumpPoint) {
+                  newScroll -= jumpPoint;
+                  scrollLeft -= jumpPoint;
+              }
+              slider.scrollLeft = newScroll;
+              exactScrollLeft = newScroll; 
+          });
+
+          slider.addEventListener('touchstart', (e) => {
+              isDown = true;
+              stopAutoScroll();
+              startX = e.touches[0].pageX - slider.offsetLeft;
+              scrollLeft = slider.scrollLeft;
+          }, {passive: true});
+          
+          slider.addEventListener('touchend', () => {
+              isDown = false;
+              startAutoScroll();
+          }, {passive: true});
+          
+          slider.addEventListener('touchmove', (e) => {
+              if (!isDown || jumpPoint <= 0) return;
+              const x = e.touches[0].pageX - slider.offsetLeft;
+              const walk = (x - startX) * 1.5;
+              let newScroll = scrollLeft - walk;
+
+              if (newScroll <= 0) {
+                  newScroll += jumpPoint;
+                  scrollLeft += jumpPoint;
+              } else if (newScroll >= jumpPoint) {
+                  newScroll -= jumpPoint;
+                  scrollLeft -= jumpPoint;
+              }
+              slider.scrollLeft = newScroll;
+              exactScrollLeft = newScroll; 
+          }, {passive: true});
+
+      } else {
+          slider.innerHTML = '<div class="w-full text-center text-sm text-cream-200/60 pb-8">Belum ada ulasan yang ditampilkan.</div>';
       }
 
-      document.getElementById('grid-best').innerHTML =
-        BEST_SELLER.map((p, i) => `<div class="fade-up d-${i + 1}">${kartuProduk(p)}</div>`).join('');
-
-      // 2. Render Testimoni Dummy
-      document.getElementById('grid-testimoni').innerHTML = REVIEWS.filter(r => r.bintang === 5).slice(0, 3).map(r => `
-                  <figure class="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm">
-                    <div class="flex items-center gap-1 mb-3">${starsHTML(r.bintang, 'w-4 h-4')}</div>
-                    <blockquote class="text-sm leading-relaxed text-cream-200/85 mb-5">&ldquo;${r.teks}&rdquo;</blockquote>
-                    <figcaption class="flex items-center gap-3">
-                      <img src="${imgAvatar(r.avatar)}" alt="Ilustrasi ${r.nama}" loading="lazy"
-                           class="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white/20">
-                      <span class="min-w-0">
-                        <span class="block text-sm font-semibold text-white truncate">${r.nama}</span>
-                        <span class="block text-[11px] text-cream-200/50 truncate">${r.produk}</span>
-                      </span>
-                    </figcaption>
-                  </figure>`).join('');
-
-      // 3. Sinkronisasi Badge Keranjang Pertama Kali Buka Beranda
       if (JUMLAH_KERANJANG > 0) {
-        document.querySelectorAll('[data-cart-badge]').forEach(el => {
-          el.textContent = JUMLAH_KERANJANG;
-          el.classList.remove('hidden');
-        });
+        document.querySelectorAll('[data-cart-badge]').forEach(el => { el.textContent = JUMLAH_KERANJANG; el.classList.remove('hidden'); });
       }
 
-      icons();
+      if(typeof icons === 'function') icons();
     });
   </script>
 @endpush

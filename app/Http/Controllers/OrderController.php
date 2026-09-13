@@ -2,19 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        return view('riwayat-pesanan');
+        // PERBAIKAN: Hanya mengambil pesanan milik user yang sedang login
+        $orders = Order::where('user_id', Auth::id())
+                       ->latest()
+                       ->get();
+        
+        return view('riwayat-pesanan', compact('orders'));
     }
 
-    // Tambahkan method ini:
     public function show($kode)
     {
-        // Lempar kode (ex: 4G-2026-XYZ) ke Blade untuk dibaca oleh JavaScript
-        return view('pesanan-detail', compact('kode'));
+        // PERBAIKAN: Pastikan pesanan yang dilihat benar-benar milik user yang sedang login
+        // Jika user memaksa membuka URL pesanan orang lain, sistem akan memunculkan error 404 (Not Found)
+        $order = Order::with(['items.product', 'payment', 'shipping'])
+                      ->where('order_number', $kode)
+                      ->where('user_id', Auth::id())
+                      ->firstOrFail();
+        
+        return view('pesanan-detail', compact('order', 'kode'));
+    }
+
+    public function cancel(Order $order)
+    {
+        // Memastikan hanya pemilik asli yang bisa membatalkan pesanannya sendiri
+        if ($order->user_id !== Auth::id()) {
+            return back()->with('error_toast', 'Akses ditolak.');
+        }
+
+        // Pesanan hanya bisa dibatalkan jika admin belum memprosesnya
+        if ($order->status === 'menunggu_pembayaran') {
+            $order->update(['status' => 'dibatalkan']);
+            return back()->with('success_toast', 'Pesanan berhasil dibatalkan.');
+        }
+
+        return back()->with('error_toast', 'Pesanan ini sudah diproses dan tidak bisa dibatalkan.');
     }
 }
