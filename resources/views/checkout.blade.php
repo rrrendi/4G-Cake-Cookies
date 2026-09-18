@@ -149,8 +149,8 @@
                   <span x-show="f.metode==='jnt'" class="w-2 h-2 rounded-full bg-rose-500"></span></span>
               </span>
               <span class="block font-display font-semibold text-cocoa-700 text-sm">Kirim via J&amp;T Express</span>
-              <span class="block text-xs text-cocoa-400 mt-1">Ongkir Rp20.000 &ndash; Rp30.000, sampai 1&ndash;2 hari
-                untuk area Aceh.</span>
+              <span class="block text-xs text-cocoa-400 mt-1">Ongkir Rp10.000 &ndash; Rp30.000, sampai 1&ndash;2 hari
+                untuk area Bandung Raya.</span>
             </button>
 
             <button type="button" @click="f.metode='ambil'"
@@ -163,8 +163,8 @@
                   <span x-show="f.metode==='ambil'" class="w-2 h-2 rounded-full bg-rose-500"></span></span>
               </span>
               <span class="block font-display font-semibold text-cocoa-700 text-sm">Ambil di tempat</span>
-              <span class="block text-xs text-cocoa-400 mt-1">Gratis ongkir. Jl. Samudera No. 12, Banda Sakti,
-                Lhokseumawe.</span>
+              <span class="block text-xs text-cocoa-400 mt-1">Gratis ongkir. Gg. Kb. Jukut 4 No.18/26, Ciroyom,
+                Kec. Andir, Kota Bandung.</span>
             </button>
           </div>
 
@@ -179,20 +179,20 @@
             <div>
               <label class="label" for="kota">Kota / kabupaten</label>
               <select id="kota" x-model="f.kota" @change="hitungOngkir()" class="select">
-                <option value="Lhokseumawe">Lhokseumawe &mdash; Rp20.000</option>
-                <option value="Aceh Utara">Aceh Utara &mdash; Rp22.000</option>
-                <option value="Bireuen">Bireuen &mdash; Rp25.000</option>
-                <option value="Kota Langsa">Kota Langsa &mdash; Rp25.000</option>
-                <option value="Banda Aceh">Banda Aceh &mdash; Rp30.000</option>
+                <option value="Kota Bandung">Kota Bandung &mdash; Rp10.000</option>
+                <option value="Kota Cimahi">Kota Cimahi &mdash; Rp15.000</option>
+                <option value="Kabupaten Bandung">Kabupaten Bandung &mdash; Rp20.000</option>
+                <option value="Kabupaten Bandung Barat">Kabupaten Bandung Barat &mdash; Rp20.000</option>
+                <option value="Kabupaten Sumedang">Kabupaten Sumedang &mdash; Rp30.000</option>
               </select>
             </div>
             <div>
               <label class="label" for="kecamatan">Kecamatan</label>
-              <input id="kecamatan" x-model="f.kecamatan" type="text" class="input" placeholder="Banda Sakti">
+              <input id="kecamatan" x-model="f.kecamatan" type="text" class="input" placeholder="Coblong">
             </div>
             <div>
               <label class="label" for="pos">Kode pos</label>
-              <input id="pos" x-model="f.pos" type="text" inputmode="numeric" class="input" placeholder="24351">
+              <input id="pos" x-model="f.pos" type="text" inputmode="numeric" class="input" placeholder="40182">
             </div>
           </div>
 
@@ -201,7 +201,7 @@
               <i data-lucide="map-pin" class="w-5 h-5 text-rose-500 shrink-0 mt-0.5"></i>
               <div class="text-sm">
                 <p class="font-semibold text-cocoa-700 mb-1">Toko 4G Cake &amp; Cookies</p>
-                <p class="text-cocoa-400 leading-relaxed">Jl. Samudera No. 12, Banda Sakti, Lhokseumawe, Aceh 24351<br>
+                <p class="text-cocoa-400 leading-relaxed">Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung, Jawa Barat 40182<br>
                   Buka Senin&ndash;Sabtu 08.00&ndash;20.00, Minggu 10.00&ndash;17.00</p>
               </div>
             </div>
@@ -445,7 +445,7 @@
         salah: { nama: false, hp: false, tanggal: false, alamat: false },
         f: {
           nama: '', hp: '', email: '', tanggal: '', jam: '', catatan: '', metode: 'jnt',
-          alamat: '', kecamatan: '', kota: 'Lhokseumawe', pos: '',
+          alamat: '', kecamatan: '', kota: 'Kota Bandung', pos: '',
           bayar: 'bca', bukti: '', buktiUrl: '', fileInput: null, setuju: false
         },
 

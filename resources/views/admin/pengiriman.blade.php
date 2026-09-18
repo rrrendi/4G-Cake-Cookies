@@ -30,9 +30,9 @@
     <div class="grid gap-3 md:grid-cols-3">
       <div class="relative md:col-span-2">
         <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-cocoa-300 pointer-events-none"></i>
-        <input x-model="q" type="search" class="input !pl-11" placeholder="Cari kode pesanan, nama, atau nomor resi" aria-label="Cari pengiriman">
+        <input x-model="q" @input="halaman = 1" type="search" class="input !pl-11" placeholder="Cari kode pesanan, nama, atau nomor resi" aria-label="Cari pengiriman">
       </div>
-      <select x-model="fStatus" class="select" aria-label="Filter status pengiriman">
+      <select x-model="fStatus" @change="halaman = 1" class="select" aria-label="Filter status pengiriman">
         <option value="">Semua status</option>
         <template x-for="(s, key) in STATUS_KIRIM" :key="key">
           <option :value="key" x-text="s.label"></option>
@@ -48,7 +48,7 @@
         <thead><tr><th>Kode pesanan</th><th>Penerima</th><th>Tujuan</th><th>Kurir</th>
           <th>Nomor resi</th><th>Tanggal kirim</th><th>Status</th><th>Update terakhir</th><th class="text-right">Aksi</th></tr></thead>
         <tbody>
-          <template x-for="p in hasil" :key="p.kode">
+          <template x-for="p in halamanIni" :key="p.id">
             <tr>
               <td class="font-medium text-cocoa-700 whitespace-nowrap"><a href="{{ route('admin.pesanan.index') }}" class="hover:text-rose-600 transition" x-text="p.kode"></a></td>
               <td class="text-cocoa-500" x-text="p.pelanggan"></td>
@@ -73,7 +73,7 @@
                 <div class="flex justify-end gap-1">
                   <button @click="majukan(p)" class="icon-btn tap" title="Majukan status">
                     <i data-lucide="chevrons-right" class="w-4 h-4"></i></button>
-                  <button @click="toast('Label pengiriman ' + p.kode + ' dicetak (simulasi).','info')" class="icon-btn tap" title="Cetak label">
+                  <button @click="cetakLabel(p)" class="icon-btn tap" title="Cetak label">
                     <i data-lucide="printer" class="w-4 h-4"></i></button>
                 </div>
               </td>
@@ -87,11 +87,18 @@
       <span class="grid place-items-center w-14 h-14 mx-auto rounded-2xl bg-cream-100 text-cocoa-300 mb-4"><i data-lucide="truck" class="w-6 h-6"></i></span>
       <p class="font-display font-semibold text-cocoa-700 mb-1">Tidak ada paket pada filter ini</p>
       <p class="text-sm text-cocoa-400 mb-5">Semua pesanan J&amp;T akan otomatis muncul di sini.</p>
-      <button @click="q=''; fStatus=''" class="btn btn-outline btn-sm mx-auto">Reset filter</button>
+      <button @click="q=''; fStatus=''; halaman=1" class="btn btn-outline btn-sm mx-auto">Reset filter</button>
     </div>
 
-    <div class="px-5 py-4 border-t border-cream-200 text-sm text-cocoa-400">
-      Menampilkan <span class="font-semibold text-cocoa-700" x-text="hasil.length"></span> dari <span x-text="list.length"></span> paket
+    <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-t border-cream-200 text-sm">
+      <p class="text-cocoa-400">Menampilkan <span class="font-semibold text-cocoa-700" x-text="halamanIni.length"></span> dari <span x-text="hasil.length"></span> paket <span x-show="hasil.length !== list.length">(total <span x-text="list.length"></span>)</span></p>
+      <div class="flex items-center gap-1" x-show="totalHalaman > 1">
+        <button @click="halaman--" :disabled="halaman === 1" class="icon-btn tap" :class="halaman === 1 && 'opacity-40 pointer-events-none'" aria-label="Halaman sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <template x-for="n in nomorHalaman" :key="n">
+          <button @click="halaman = n" class="w-9 h-9 rounded-xl text-sm font-medium transition" :class="n===halaman ? 'bg-rose-500 text-white' : 'text-cocoa-500 hover:bg-cream-100'" x-text="n"></button>
+        </template>
+        <button @click="halaman++" :disabled="halaman === totalHalaman" class="icon-btn tap" :class="halaman === totalHalaman && 'opacity-40 pointer-events-none'" aria-label="Halaman berikutnya"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      </div>
     </div>
   </div>
   <!-- TABEL PENGIRIMAN END -->
@@ -112,7 +119,7 @@
               <select id="r-kurir" x-model="formKurir" class="select">
                 <option>J&amp;T Express</option>
                 <option>J&amp;T Cargo</option>
-                <option>Kurir internal (motor)</option>
+                <option>Kurir internal</option>
               </select>
             </div>
             <div>
@@ -120,9 +127,9 @@
               <input id="r-tglkirim" x-model="formTanggal" type="date" class="input">
             </div>
             <div>
-              <label class="label" for="r-resi">Nomor resi</label>
+              <label class="label" for="r-resi">Nomor resi <span class="text-cocoa-300 font-normal">(kosongkan jika kurir tidak menerbitkan resi, mis. ojek online)</span></label>
               <input id="r-resi" x-model="formResi" type="text" class="input font-mono" placeholder="JT8842190365">
-              <button @click="formResi = 'JT88' + Math.floor(10000000 + Math.random()*89999999)" class="text-xs text-rose-600 hover:underline mt-2">Buat nomor contoh</button>
+              <p class="hint mt-2" x-show="formKurir === 'Kurir internal'">Kurir internal tidak wajib diisi resi.</p>
             </div>
             <div>
               <p class="label">Status pengiriman</p>
@@ -136,7 +143,7 @@
 
           <div class="flex gap-3 mt-7">
             <button @click="modal=false" class="btn btn-outline flex-1">Batal</button>
-            <button @click="simpanResi()" class="btn btn-primary flex-1"><i data-lucide="save" class="w-4 h-4"></i> Simpan</button>
+            <button @click="simpanResi()" class="btn btn-primary flex-1" :disabled="menyimpan"><i data-lucide="save" class="w-4 h-4"></i> <span x-text="menyimpan ? 'Menyimpan…' : 'Simpan'"></span></button>
           </div>
         </div>
       </template>
@@ -149,51 +156,126 @@
 @push('scripts')
 <script>
   function manajemenPengiriman() {
+    const dataAwal = @json($shippings);
+
+    const STATUS_KIRIM = {
+      pickup: { label:'Menunggu Pickup',   cls:'badge-wait',    icon:'package-search' },
+      kurir:  { label:'Diambil Kurir',     cls:'badge-process', icon:'package-check' },
+      jalan:  { label:'Dalam Perjalanan',  cls:'badge-ship',    icon:'truck' },
+      sampai: { label:'Sampai Tujuan',     cls:'badge-done',    icon:'map-pin-check' }
+    };
+
     return {
-      list: JSON.parse(JSON.stringify(PENGIRIMAN)),
+      list: dataAwal,
       STATUS_KIRIM, q:'', fStatus:'',
-      modal:false, aktif:null, formResi:'', formStatus:'', formKurir:'', formTanggal:'',
+      halaman:1, perPage:10,
+      modal:false, aktif:null, formResi:'', formStatus:'', formKurir:'', formTanggal:'', menyimpan:false,
 
       tutupSemua() { this.modal = false; },
-      init() { this.$nextTick(() => icons()); this.$watch('hasil', () => this.$nextTick(() => icons())); },
+      init() { this.$nextTick(() => icons()); this.$watch('halamanIni', () => this.$nextTick(() => icons())); },
+      cetakLabel(p) {
+        const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Label ${p.kode}</title>
+        <style>
+          body{font-family:Arial,Helvetica,sans-serif;margin:0;display:flex;justify-content:center;padding:24px;}
+          .label{width:340px;border:2px dashed #333;padding:18px;font-size:13px;color:#222;}
+          .label h1{font-size:15px;margin:0 0 2px}
+          .label .sub{color:#555;font-size:11px;margin-bottom:10px}
+          hr{border:none;border-top:1px solid #333;margin:10px 0}
+          .besar{font-size:20px;font-weight:bold;letter-spacing:1px}
+          .baris{margin:4px 0}
+          .lbl{color:#666;font-size:11px}
+        </style></head><body>
+        <div class="label">
+          <h1>4G Cake &amp; Cookies</h1>
+          <p class="sub">Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung</p>
+          <hr>
+          <p class="lbl">KEPADA</p>
+          <p class="besar">${p.pelanggan}</p>
+          <p class="baris">${p.kota}</p>
+          <hr>
+          <p class="baris"><span class="lbl">Kurir:</span> ${p.kurir}</p>
+          <p class="baris"><span class="lbl">No. Resi:</span> ${p.resi === '-' ? '(belum ada)' : p.resi}</p>
+          <p class="baris"><span class="lbl">Kode pesanan:</span> ${p.kode}</p>
+        </div>
+        </body></html>`;
+
+        const w = window.open('', '_blank', 'width=420,height=560');
+        if (!w) { toast('Izinkan pop-up di browser untuk mencetak label.', 'error'); return; }
+        w.document.write(html);
+        w.document.close();
+        w.focus();
+        setTimeout(() => w.print(), 300);
+      },
       get hasil() {
         const q = this.q.trim().toLowerCase();
         return this.list.filter(p =>
           (!q || p.kode.toLowerCase().includes(q) || p.pelanggan.toLowerCase().includes(q) || p.resi.toLowerCase().includes(q)) &&
           (!this.fStatus || p.status === this.fStatus));
       },
+      get totalHalaman() { return Math.max(1, Math.ceil(this.hasil.length / this.perPage)); },
+      get halamanIni() {
+        const awal = (this.halaman - 1) * this.perPage;
+        return this.hasil.slice(awal, awal + this.perPage);
+      },
+      get nomorHalaman() {
+        const total = this.totalHalaman;
+        let awal = Math.max(1, this.halaman - 2);
+        let akhir = Math.min(total, awal + 4);
+        awal = Math.max(1, akhir - 4);
+        const arr = [];
+        for (let i = awal; i <= akhir; i++) arr.push(i);
+        return arr;
+      },
       bukaResi(p) {
         this.aktif = p; this.formResi = p.resi === '-' ? '' : p.resi;
         this.formStatus = p.status; this.formKurir = p.kurir;
-        this.formTanggal = p.tanggalKirim === '-' ? HARI_INI : p.tanggalKirim;
+        this.formTanggal = p.tanggalKirim === '-' ? '{{ now()->format('Y-m-d') }}' : p.tanggalKirim;
         this.modal = true; this.$nextTick(() => icons());
       },
       simpanResi() {
-        if (this.formStatus !== 'pickup' && !this.formResi.trim()) {
+        if (this.formStatus !== 'pickup' && this.formKurir !== 'Kurir internal' && !this.formResi.trim()) {
           toast('Status ini membutuhkan nomor resi J&T terlebih dahulu.', 'error', 'Resi belum diisi'); return;
         }
-        this.aktif.resi = this.formResi.trim() || '-';
-        this.aktif.status = this.formStatus;
-        this.aktif.kurir = this.formKurir;
-        this.aktif.tanggalKirim = this.formStatus === 'pickup' ? '-' : (this.formTanggal || HARI_INI);
-        this.aktif.update = HARI_INI + ' ' + new Date().toTimeString().slice(0,5);
-        toast(this.aktif.kode + ' diperbarui: ' + STATUS_KIRIM[this.formStatus].label, 'success', 'Pengiriman tersimpan');
-        this.modal = false; this.$nextTick(() => icons());
+        this.menyimpan = true;
+        fetch(`{{ url('admin/pengiriman') }}/${this.aktif.id}/resi`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+          body: JSON.stringify({ kurir: this.formKurir, status: this.formStatus, resi: this.formResi.trim() || null, tanggal_kirim: this.formTanggal || null })
+        })
+        .then(async res => {
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw new Error(data && data.message ? data.message : 'Gagal menyimpan pengiriman.');
+          return data;
+        })
+        .then(data => {
+          Object.assign(this.aktif, data.data);
+          toast(this.aktif.kode + ' diperbarui: ' + STATUS_KIRIM[this.aktif.status].label, 'success', 'Pengiriman tersimpan');
+          if (data.order_cascade) setTimeout(() => toast(data.order_cascade, 'info', 'Status pesanan ikut diperbarui'), 500);
+          this.modal = false;
+        })
+        .catch(err => toast(err.message, 'error'))
+        .finally(() => { this.menyimpan = false; this.$nextTick(() => icons()); });
       },
       majukan(p) {
         const urut = Object.keys(STATUS_KIRIM);
-        const i = urut.indexOf(p.status);
-        if (i === urut.length - 1) { toast(p.kode + ' sudah sampai tujuan.', 'info'); return; }
-        const baru = urut[i + 1];
-        if (baru === 'kurir' && p.resi === '-') {
-          p.resi = 'JT88' + Math.floor(10000000 + Math.random()*89999999);
-          p.tanggalKirim = HARI_INI;
-          toast('Nomor resi otomatis dibuat: ' + p.resi, 'info');
-        }
-        p.status = baru;
-        p.update = HARI_INI + ' ' + new Date().toTimeString().slice(0,5);
-        toast(p.kode + ' → ' + STATUS_KIRIM[baru].label, 'success', 'Status pengiriman');
-        this.$nextTick(() => icons());
+        if (urut.indexOf(p.status) === urut.length - 1) { toast(p.kode + ' sudah sampai tujuan.', 'info'); return; }
+
+        fetch(`{{ url('admin/pengiriman') }}/${p.id}/majukan`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+        })
+        .then(async res => {
+          const data = await res.json().catch(() => null);
+          if (!res.ok) throw new Error(data && data.message ? data.message : 'Gagal memperbarui status.');
+          return data;
+        })
+        .then(data => {
+          Object.assign(p, data.data);
+          toast(p.kode + ' → ' + STATUS_KIRIM[p.status].label, 'success', 'Status pengiriman');
+          if (data.order_cascade) setTimeout(() => toast(data.order_cascade, 'info', 'Status pesanan ikut diperbarui'), 500);
+          this.$nextTick(() => icons());
+        })
+        .catch(err => toast(err.message, 'error'));
       }
     };
   }

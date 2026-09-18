@@ -21,7 +21,9 @@ use App\Http\Controllers\Admin\{
     AdminReviewController,
     FinancialTransactionController,
     ReportController,
-    UserController
+    UserController,
+    AdminSearchController,
+    AdminNotificationController
 };
 
 use App\Http\Controllers\Auth\GoogleController;
@@ -88,6 +90,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,owner'])
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+    // Pencarian global & notifikasi (dipakai di topbar semua halaman admin)
+    Route::get('/search', [AdminSearchController::class, 'search'])->name('search');
+    Route::get('/notifikasi', [AdminNotificationController::class, 'index'])->name('notifikasi');
+
     // Manajemen Produk & Pesanan
     Route::resource('produk', AdminProductController::class)->except(['create', 'show', 'edit']);
     Route::patch('/produk/{product}/stok', [AdminProductController::class, 'toggleStock'])->name('produk.stok');
@@ -103,16 +109,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin,owner'])
 
     // Pengiriman
     Route::get('/pengiriman', [AdminPengirimanController::class, 'index'])->name('pengiriman.index');
+    Route::patch('/pengiriman/{id}/resi', [AdminPengirimanController::class, 'updateResi'])->name('pengiriman.resi');
+    Route::patch('/pengiriman/{id}/majukan', [AdminPengirimanController::class, 'majukan'])->name('pengiriman.majukan');
 
     Route::resource('review', AdminReviewController::class)->only(['index', 'update']);
-    Route::resource('keuangan', FinancialTransactionController::class)->except(['create', 'show', 'edit']);
-    Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
 
     // Owner Only Area (Laporan, Keuangan & Pengguna)
+    // Catatan: dipindahkan ke sini agar konsisten dengan halaman "Pengguna & Role" yang
+    // menyatakan Admin tidak boleh melihat modul keuangan — sebelumnya keuangan & laporan
+    // masih bisa diakses role admin walau UI-nya sudah menjanjikan sebaliknya.
     Route::middleware(['role:owner'])->group(function () {
+        Route::resource('keuangan', FinancialTransactionController::class)->except(['create', 'show', 'edit']);
+        Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
         Route::get('/pengguna', [UserController::class, 'index'])->name('pengguna.index');
+        Route::get('/pengguna/{user}/detail', [UserController::class, 'detail'])->name('pengguna.detail');
         Route::patch('/pengguna/{user}/role', [UserController::class, 'updateRole'])->name('pengguna.role');
         Route::patch('/pengguna/{user}/status', [UserController::class, 'updateStatus'])->name('pengguna.status');
+        Route::patch('/pengguna/{user}/reset-password', [UserController::class, 'resetPassword'])->name('pengguna.reset-password');
     });
 });
 
@@ -148,6 +161,33 @@ Route::get('/sync-katalog', function () {
         ]);
     }
     return "<h1>SINKRONISASI BERHASIL!</h1><p>Silakan kembali ke halaman Katalog atau Beranda, angka Terjual dan Ulasan kini sudah akurat.</p>";
+});
+
+// Menambal pesanan "Selesai" dari SEBELUM fitur pencatatan otomatis Keuangan
+// dipasang, supaya nilainya ikut masuk sebagai pemasukan di Modul Keuangan &
+// Laporan Laba Rugi. Aman dijalankan berkali-kali (dicek per order_id lewat
+// firstOrCreate, tidak pernah dobel).
+Route::get('/sync-keuangan', function () {
+    $pesananSelesai = \App\Models\Order::where('status', 'selesai')->get();
+    $dibuat = 0;
+
+    foreach ($pesananSelesai as $order) {
+        $trx = \App\Models\FinancialTransaction::firstOrCreate(
+            ['order_id' => $order->id, 'type' => 'pemasukan'],
+            [
+                'category' => 'Penjualan Online',
+                'description' => 'Penjualan pesanan ' . $order->order_number,
+                'amount' => $order->total,
+                'transaction_date' => $order->updated_at->toDateString(),
+                'created_by' => null,
+            ]
+        );
+        if ($trx->wasRecentlyCreated) {
+            $dibuat++;
+        }
+    }
+
+    return "<h1>SINKRONISASI KEUANGAN BERHASIL!</h1><p>{$dibuat} pesanan lama berstatus Selesai baru saja ditambahkan sebagai pemasukan di Modul Keuangan. Silakan cek halaman Keuangan atau Laporan.</p>";
 });
 
 // Mem-bypass Controller: Route langsung untuk Sembunyikan Ulasan

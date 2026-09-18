@@ -351,6 +351,27 @@ function tandaiNavAktif() {
   });
 }
 
+/* ---------------------------------------------------------------- UNDUH CSV -- */
+/* Dipakai bersama oleh Keuangan, Laporan, dll — bikin file CSV di browser (bisa
+   dibuka Excel/Google Sheets) tanpa perlu library atau proses di server. */
+function unduhCSV(namaFile, header, rows) {
+  const esc = v => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const isi = [header, ...rows].map(r => r.map(esc).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + isi], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = namaFile.endsWith('.csv') ? namaFile : namaFile + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if (typeof toast === 'function') toast(`${a.download} sedang diunduh.`, 'success', 'Unduhan dimulai');
+}
+
 /* ------------------------------------------------------------- INISIALISASI -- */
 document.addEventListener('DOMContentLoaded', () => {
   icons();

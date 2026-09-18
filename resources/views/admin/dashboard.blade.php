@@ -27,11 +27,11 @@
     <div class="h-[280px] sm:h-[320px]"><canvas id="c-penjualan" role="img" aria-label="Grafik garis penjualan dan pengeluaran enam bulan terakhir"></canvas></div>
   </div>
 
-  <!-- CHART PENGELUARAN -->
+  <!-- CHART PENJUALAN PER KATEGORI (pengganti pengeluaran per kategori) -->
   <div class="card p-5 sm:p-6">
-    <h2 class="font-display font-bold text-cocoa-700 mb-1">Pengeluaran per kategori</h2>
-    <p class="text-xs text-cocoa-300 mb-5">Total bulan Agustus 2026</p>
-    <div class="h-[240px]"><canvas id="c-pengeluaran" role="img" aria-label="Diagram donat pengeluaran per kategori"></canvas></div>
+    <h2 class="font-display font-bold text-cocoa-700 mb-1">Penjualan per kategori produk</h2>
+    <p class="text-xs text-cocoa-300 mb-5">Kontribusi pendapatan tiap kategori &middot; {{ $ringkasan['periode']['ini'] }}</p>
+    <div class="h-[240px]"><canvas id="c-pengeluaran" role="img" aria-label="Diagram donat penjualan per kategori produk"></canvas></div>
     <div id="legend-pengeluaran" class="mt-5 space-y-2"></div>
   </div>
 </div>
@@ -42,7 +42,7 @@
     <div class="flex items-start justify-between gap-3 mb-5">
       <div>
         <h2 class="font-display font-bold text-cocoa-700">Produk terlaris</h2>
-        <p class="text-xs text-cocoa-300 mt-1">Jumlah item terjual sepanjang 2026</p>
+        <p class="text-xs text-cocoa-300 mt-1">Jumlah item terjual sepanjang waktu</p>
       </div>
       <a href="{{ route('admin.produk.index') }}" class="btn btn-ghost btn-sm">Kelola</a>
     </div>
@@ -73,7 +73,7 @@
     <div class="flex items-start justify-between gap-3 mb-5">
       <div>
         <h2 class="font-display font-bold text-cocoa-700">Antrean produksi terdekat</h2>
-        <p class="text-xs text-cocoa-300 mt-1">Yang harus mulai dikerjakan dalam 3 hari ke depan</p>
+        <p class="text-xs text-cocoa-300 mt-1">Yang harus mulai dikerjakan dalam beberapa hari ke depan</p>
       </div>
       <a href="{{ route('admin.jadwal.index') }}" class="btn btn-ghost btn-sm">Lihat jadwal</a>
     </div>
@@ -95,7 +95,7 @@
         </a>
         <a href="{{ route('admin.pengiriman.index') }}" class="flex items-center gap-3 rounded-2xl border border-cream-200 p-4 hover:border-rose-300 hover:bg-blush-50/40 transition">
           <span class="grid place-items-center w-10 h-10 rounded-xl bg-cocoa-200/60 text-cocoa-600 shrink-0"><i data-lucide="truck" class="w-5 h-5"></i></span>
-          <span><span class="block text-sm font-semibold text-cocoa-700">Input resi</span><span class="block text-xs text-cocoa-300" id="aksi-resi">Paket menunggu resi</span></span>
+          <span><span class="block text-sm font-semibold text-cocoa-700">Input resi</span><span class="block text-xs text-cocoa-300" id="aksi-resi">Memuat&hellip;</span></span>
         </a>
         <a href="{{ route('admin.laporan.index') }}" class="flex items-center gap-3 rounded-2xl border border-cream-200 p-4 hover:border-rose-300 hover:bg-blush-50/40 transition">
           <span class="grid place-items-center w-10 h-10 rounded-xl bg-blush-50 text-rose-500 shrink-0"><i data-lucide="file-bar-chart" class="w-5 h-5"></i></span>
@@ -118,6 +118,22 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
+(() => {
+  const RINGKASAN = @json($ringkasan);
+  const CHART_DATA = @json($chartData);
+  const PESANAN_TERBARU = @json($pesananTerbaru);
+  const ANTREAN = @json($antrean);
+  const PERHATIAN = @json($perhatian);
+
+  const STATUS_LABEL = {
+    menunggu_pembayaran: { label: 'Menunggu Bayar', cls: 'badge-wait' },
+    diproses:            { label: 'Diproses',       cls: 'badge-process' },
+    dikemas:             { label: 'Dikemas',        cls: 'badge-pack' },
+    dikirim:             { label: 'Dikirim',        cls: 'badge-ship' },
+    selesai:             { label: 'Selesai',        cls: 'badge-done' },
+    dibatalkan:          { label: 'Dibatalkan',     cls: 'badge-cancel' },
+  };
+
   const WARNA = { rose:'#D97E7E', gold:'#C9A227', cocoa:'#8B6B58', cream:'#F7EADB', teal:'#5E9450', dust:'#B49B8C' };
 
   function kartu(judul, nilai, delta, ikon, tone, sub) {
@@ -138,28 +154,30 @@
 
   let chartPenjualan = null;
 
-  function ubahRentang(n) {
-    const pakai12 = n === 12;
-    chartPenjualan.data.labels = pakai12 ? CHART_DATA.bulan12 : CHART_DATA.bulan;
-    chartPenjualan.data.datasets[0].data = pakai12 ? CHART_DATA.penjualan12 : CHART_DATA.penjualan;
-    chartPenjualan.data.datasets[1].data = pakai12 ? CHART_DATA.pengeluaran12 : CHART_DATA.pengeluaran;
+  window.ubahRentang = function (n) {
+    const data = n === 12
+      ? { labels: CHART_DATA.bulan12, penjualan: CHART_DATA.penjualan12, pengeluaran: CHART_DATA.pengeluaran12 }
+      : { labels: CHART_DATA.bulan, penjualan: CHART_DATA.penjualan, pengeluaran: CHART_DATA.pengeluaran };
+    chartPenjualan.data.labels = data.labels;
+    chartPenjualan.data.datasets[0].data = data.penjualan;
+    chartPenjualan.data.datasets[1].data = data.pengeluaran;
     chartPenjualan.update();
     document.querySelectorAll('.rentang').forEach(b => {
       const aktif = b.id === 'rentang-' + n;
-      b.className = 'rentang rounded-full px-3.5 py-2.5 text-xs font-medium ' +
+      b.className = 'rentang rounded-full px-3.5 py-2.5 text-xs font-medium transition ' +
         (aktif ? 'bg-white text-cocoa-700 shadow-sm' : 'text-cocoa-400 hover:text-cocoa-600');
       b.setAttribute('aria-pressed', aktif);
     });
     toast('Grafik menampilkan ' + n + ' bulan terakhir.', 'info');
-  }
+  };
 
   document.addEventListener('DOMContentLoaded', () => {
     const R = RINGKASAN;
     document.getElementById('kartu-ringkas').innerHTML =
-      kartu('Total Pesanan', R.totalPesanan.nilai + ' pesanan', R.totalPesanan.delta, 'receipt-text', 'bg-blush-100 text-rose-600', 'Agustus 2026 · Juli ' + R.totalPesanan.sebelum + ' pesanan') +
-      kartu('Total Penjualan', rp(R.totalPenjualan.nilai), R.totalPenjualan.delta, 'trending-up', 'bg-cream-200 text-gold-600', 'Agustus 2026 · Juli ' + rp(R.totalPenjualan.sebelum)) +
-      kartu('Total Pengeluaran', rp(R.totalPengeluaran.nilai), R.totalPengeluaran.delta, 'shopping-cart', 'bg-cocoa-200/60 text-cocoa-600', 'Bahan baku menyumbang 53%') +
-      kartu('Laba Bersih', rp(R.labaBersih.nilai), R.labaBersih.delta, 'piggy-bank', 'bg-[#E9F6EC] text-green-700', 'Margin 54% dari total penjualan');
+      kartu('Total Pesanan', R.totalPesanan.nilai + ' pesanan', R.totalPesanan.delta, 'receipt-text', 'bg-blush-100 text-rose-600', R.periode.ini + ' · ' + R.periode.lalu + ' ' + R.totalPesanan.sebelum + ' pesanan') +
+      kartu('Total Penjualan', rp(R.totalPenjualan.nilai), R.totalPenjualan.delta, 'trending-up', 'bg-cream-200 text-gold-600', R.periode.ini + ' · ' + R.periode.lalu + ' ' + rp(R.totalPenjualan.sebelum)) +
+      kartu('Total Pengeluaran', rp(R.totalPengeluaran.nilai), R.totalPengeluaran.delta, 'shopping-cart', 'bg-cocoa-200/60 text-cocoa-600', R.periode.ini) +
+      kartu('Laba Bersih', rp(R.labaBersih.nilai), R.labaBersih.delta, 'piggy-bank', 'bg-[#E9F6EC] text-green-700', R.totalPenjualan.nilai > 0 ? 'Margin ' + Math.round(R.labaBersih.nilai / R.totalPenjualan.nilai * 100) + '% dari total penjualan' : 'Belum ada penjualan periode ini');
 
     /* --- Chart 1: penjualan vs pengeluaran --- */
     Chart.defaults.font.family = 'Inter, sans-serif';
@@ -189,25 +207,31 @@
       }
     });
 
-    /* --- Chart 2: pengeluaran per kategori --- */
+    /* --- Chart 2: penjualan per kategori (pengganti pengeluaran per kategori) --- */
     const palet = [WARNA.rose, WARNA.gold, WARNA.cocoa, WARNA.teal, WARNA.dust];
-    new Chart(document.getElementById('c-pengeluaran'), {
-      type: 'doughnut',
-      data: { labels: CHART_DATA.pengeluaranKategori.label,
-        datasets: [{ data: CHART_DATA.pengeluaranKategori.nilai, backgroundColor: palet, borderWidth:0, hoverOffset:8 }] },
-      options: { responsive:true, maintainAspectRatio:false, cutout:'62%',
-        plugins:{ legend:{display:false},
-          tooltip:{ backgroundColor:'#3C2A21', padding:12, cornerRadius:10, displayColors:false,
-            callbacks:{ label: c => c.label + ': ' + rp(c.parsed) } } } }
-    });
-    const totalPeng = CHART_DATA.pengeluaranKategori.nilai.reduce((a,b)=>a+b,0);
-    document.getElementById('legend-pengeluaran').innerHTML = CHART_DATA.pengeluaranKategori.label.map((l,i) => `
-      <div class="flex items-center gap-3 text-sm">
-        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${palet[i]}"></span>
-        <span class="flex-1 text-cocoa-500 truncate">${l}</span>
-        <span class="text-cocoa-300 text-xs">${Math.round(CHART_DATA.pengeluaranKategori.nilai[i]/totalPeng*100)}%</span>
-        <span class="font-medium text-cocoa-700 w-20 text-right">${rp(CHART_DATA.pengeluaranKategori.nilai[i])}</span>
-      </div>`).join('');
+    const kat = CHART_DATA.kategoriPenjualan;
+    if (kat.label.length) {
+      new Chart(document.getElementById('c-pengeluaran'), {
+        type: 'doughnut',
+        data: { labels: kat.label,
+          datasets: [{ data: kat.nilai, backgroundColor: palet, borderWidth:0, hoverOffset:8 }] },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'62%',
+          plugins:{ legend:{display:false},
+            tooltip:{ backgroundColor:'#3C2A21', padding:12, cornerRadius:10, displayColors:false,
+              callbacks:{ label: c => c.label + ': ' + rp(c.parsed) } } } }
+      });
+      const totalKat = kat.nilai.reduce((a,b)=>a+b,0);
+      document.getElementById('legend-pengeluaran').innerHTML = kat.label.map((l,i) => `
+        <div class="flex items-center gap-3 text-sm">
+          <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${palet[i % palet.length]}"></span>
+          <span class="flex-1 text-cocoa-500 truncate">${l}</span>
+          <span class="text-cocoa-300 text-xs">${totalKat ? Math.round(kat.nilai[i]/totalKat*100) : 0}%</span>
+          <span class="font-medium text-cocoa-700 w-20 text-right">${rp(kat.nilai[i])}</span>
+        </div>`).join('');
+    } else {
+      document.getElementById('legend-pengeluaran').innerHTML =
+        '<p class="text-sm text-cocoa-300 text-center py-6">Belum ada penjualan untuk dihitung per kategori.</p>';
+    }
 
     /* --- Chart 3: produk terlaris --- */
     new Chart(document.getElementById('c-terlaris'), {
@@ -223,62 +247,76 @@
     });
 
     /* --- Tabel pesanan terbaru --- */
-    document.getElementById('tb-pesanan').innerHTML = semuaPesanan().slice(0,5).map(o => {
-      const s = STATUS_PESANAN[o.status];
-      return `<tr>
-        <td class="whitespace-nowrap"><a href="{{ route('admin.pesanan.index') }}" class="font-medium text-cocoa-700 hover:text-rose-600 transition">${o.kode}</a></td>
-        <td class="text-cocoa-500">${o.pelanggan}</td>
-        <td class="text-cocoa-400 whitespace-nowrap">${tglID(o.ambil)}</td>
-        <td><span class="badge ${s.cls}"><span class="badge-dot"></span>${s.label}</span></td>
-        <td class="text-right font-medium text-cocoa-700 whitespace-nowrap">${rp(o.total)}</td>
-      </tr>`;
-    }).join('');
+    if (PESANAN_TERBARU.length) {
+      document.getElementById('tb-pesanan').innerHTML = PESANAN_TERBARU.map(o => {
+        const s = STATUS_LABEL[o.status] || { label:o.status, cls:'badge-neutral' };
+        return `<tr>
+          <td class="whitespace-nowrap"><a href="{{ route('admin.pesanan.index') }}" class="font-medium text-cocoa-700 hover:text-rose-600 transition">${o.kode}</a></td>
+          <td class="text-cocoa-500">${o.pelanggan}</td>
+          <td class="text-cocoa-400 whitespace-nowrap">${tglID(o.ambil)}</td>
+          <td><span class="badge ${s.cls}"><span class="badge-dot"></span>${s.label}</span></td>
+          <td class="text-right font-medium text-cocoa-700 whitespace-nowrap">${rp(o.total)}</td>
+        </tr>`;
+      }).join('');
+    } else {
+      document.getElementById('tb-pesanan').innerHTML = '<tr><td colspan="5" class="text-center text-cocoa-300 py-8">Belum ada pesanan masuk.</td></tr>';
+    }
 
     /* --- Antrean produksi --- */
-    document.getElementById('antrean').innerHTML = JADWAL.slice(0,3).map(j => `
-      <div class="rounded-2xl border border-cream-200 p-4">
-        <div class="flex items-center justify-between gap-3 mb-3">
-          <div class="flex items-center gap-3">
-            <span class="grid place-items-center w-11 h-11 rounded-xl bg-cream-100 text-cocoa-600 shrink-0 leading-none">
-              <span class="text-[10px]">${j.hari.slice(0,3)}</span>
-              <span class="font-display font-bold text-sm">${j.tanggal.slice(-2)}</span>
-            </span>
-            <div>
-              <p class="text-sm font-semibold text-cocoa-700">${tglID(j.tanggal)}</p>
-              <p class="text-[11px] text-cocoa-300">${j.pesanan} pesanan &middot; ${j.items.reduce((a,i)=>a+i.qty,0)} item</p>
+    if (ANTREAN.length) {
+      document.getElementById('antrean').innerHTML = ANTREAN.map(j => `
+        <div class="rounded-2xl border border-cream-200 p-4">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-3">
+              <span class="grid place-items-center w-11 h-11 rounded-xl bg-cream-100 text-cocoa-600 shrink-0 leading-none">
+                <span class="text-[10px]">${j.hari.slice(0,3)}</span>
+                <span class="font-display font-bold text-sm">${j.tanggal.slice(-2)}</span>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-cocoa-700">${tglID(j.tanggal)}</p>
+                <p class="text-[11px] text-cocoa-300">${j.pesanan} pesanan &middot; ${j.items.reduce((a,i)=>a+i.qty,0)} item</p>
+              </div>
             </div>
+            <a href="{{ route('admin.jadwal.index') }}" class="text-xs text-rose-600 hover:underline shrink-0">Detail</a>
           </div>
-          <a href="{{ route('admin.jadwal.index') }}" class="text-xs text-rose-600 hover:underline shrink-0">Detail</a>
-        </div>
-        <div class="flex flex-wrap gap-1.5">
-          ${j.items.map(i => `<span class="badge badge-neutral">${i.nama} &times;${i.qty}</span>`).join('')}
-        </div>
-      </div>`).join('');
+          <div class="flex flex-wrap gap-1.5">
+            ${j.items.map(i => `<span class="badge badge-neutral">${i.nama} &times;${i.qty}</span>`).join('')}
+          </div>
+        </div>`).join('');
+    } else {
+      document.getElementById('antrean').innerHTML =
+        '<p class="text-sm text-cocoa-300 text-center py-8">Tidak ada antrean produksi dalam waktu dekat.</p>';
+    }
 
     /* --- Perlu perhatian --- */
-    const habis = PRODUK.filter(p => p.stok === 'habis');
-    const menunggu = semuaPesanan().filter(p => p.status === 'menunggu');
-    const tanpaResi = PENGIRIMAN.filter(p => p.resi === '-');
+    const P = PERHATIAN;
+    let liUlasan;
+    if (P.ulasanBaru > 0) {
+      liUlasan = `<a href="{{ route('admin.review.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${P.ulasanBaru} ulasan baru</a> minggu ini, rata-rata ${P.ulasanRata} bintang.`;
+    } else {
+      liUlasan = 'Belum ada ulasan baru minggu ini.';
+    }
     document.getElementById('perhatian').innerHTML = `
       <li class="flex gap-3">
         <i data-lucide="clock" class="w-4 h-4 text-gold-600 shrink-0 mt-0.5"></i>
-        <span class="text-cocoa-500"><a href="{{ route('admin.pesanan.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${menunggu.length} pesanan</a> masih menunggu konfirmasi pembayaran.</span>
+        <span class="text-cocoa-500"><a href="{{ route('admin.pesanan.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${P.menunggu} pesanan</a> masih menunggu konfirmasi pembayaran.</span>
       </li>
       <li class="flex gap-3">
         <i data-lucide="package-x" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
-        <span class="text-cocoa-500"><a href="{{ route('admin.produk.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${habis.length} produk</a> berstatus habis: ${habis.map(p=>p.nama).join(', ')}.</span>
+        <span class="text-cocoa-500">${P.produkHabis.length ? `<a href="{{ route('admin.produk.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${P.produkHabis.length} produk</a> berstatus habis: ${P.produkHabis.join(', ')}.` : 'Semua produk berstatus tersedia.'}</span>
       </li>
       <li class="flex gap-3">
         <i data-lucide="truck" class="w-4 h-4 text-cocoa-500 shrink-0 mt-0.5"></i>
-        <span class="text-cocoa-500"><a href="{{ route('admin.pengiriman.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${tanpaResi.length} paket J&amp;T</a> belum diinput nomor resinya.</span>
+        <span class="text-cocoa-500">${P.tanpaResi > 0 ? `<a href="{{ route('admin.pengiriman.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">${P.tanpaResi} paket J&amp;T</a> belum diinput nomor resinya.` : 'Semua paket J&amp;T sudah punya nomor resi.'}</span>
       </li>
       <li class="flex gap-3">
         <i data-lucide="star" class="w-4 h-4 text-gold-500 shrink-0 mt-0.5"></i>
-        <span class="text-cocoa-500"><a href="{{ route('admin.review.index') }}" class="font-semibold text-cocoa-700 hover:text-rose-600">3 ulasan baru</a> minggu ini, rata-rata 4,8 bintang.</span>
+        <span class="text-cocoa-500">${liUlasan}</span>
       </li>`;
 
-    document.getElementById('aksi-resi').textContent = tanpaResi.length + ' paket menunggu resi';
+    document.getElementById('aksi-resi').textContent = P.tanpaResi + ' paket menunggu resi';
     icons();
   });
+})();
 </script>
 @endpush

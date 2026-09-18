@@ -215,7 +215,7 @@
     $metode_pengiriman = (str_contains($metodeRaw, 'jnt') || str_contains($metodeRaw, 'j&t')) ? 'Dikirim via J&T Express' : 'Ambil di tempat';
     
     $alamat = $metode_pengiriman === 'Ambil di tempat' 
-                ? 'Ambil di toko — Jl. Samudera No. 12, Banda Sakti, Lhokseumawe' 
+                ? 'Ambil di toko — Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung' 
                 : ($o->delivery_address ?? 'Alamat tidak ditemukan');
 
     // ==========================================
@@ -323,7 +323,7 @@
         'bayar' => $bayarText,
         'bukti' => $buktiUrl,
         'alamat' => $alamat,
-        'resi' => $o->tracking_number && $o->tracking_number !== '-' ? $o->tracking_number : null,
+        'resi' => optional($o->shipping)->tracking_number,
         'catatan' => $o->notes ?? $o->catatan ?? '',
         'items' => $mappedItems
     ];

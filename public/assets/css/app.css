@@ -167,7 +167,19 @@ table.data tbody tr:hover { background: var(--cream-50); }
 .divider-dot { width:4px; height:4px; border-radius:999px; background: var(--blush-200); }
 .star { color: var(--gold-500); }
 .star-empty { color: #E5DCD3; }
-@media print { .no-print { display: none !important; } }
+@media print {
+  .no-print { display: none !important; }
+
+  /* PERBAIKAN: window.print() sebelumnya mencetak seluruh halaman apa adanya
+     (sidebar, topbar pencarian/notifikasi, footer ikut tercetak) karena belum
+     ada CSS print sama sekali selain .no-print. Sekarang elemen navigasi panel
+     admin disembunyikan total saat mencetak, dan area konten dilebarkan penuh,
+     supaya yang tercetak/di-PDF-kan cuma isi laporannya sendiri. */
+  #admin-sidebar, #admin-topbar, #admin-footer, .skip-link, #toast-root { display: none !important; }
+  body { background: #fff !important; }
+  main#konten { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
+}
 
 /* ==========================================================================
    FASE 1.5 — perbaikan layout, aksesibilitas, dan state

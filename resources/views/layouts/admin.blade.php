@@ -45,7 +45,7 @@
 
         <div class="flex-1 min-w-0 flex flex-col">
             <!-- ADMIN TOPBAR START -->
-            <header class="sticky top-0 z-30 bg-cream-50/90 backdrop-blur border-b border-cream-200">
+            <header id="admin-topbar" class="sticky top-0 z-30 bg-cream-50/90 backdrop-blur border-b border-cream-200">
                 <div class="flex h-[68px] items-center gap-3 px-4 sm:px-6">
                     <button @click="sidebar=true"
                         class="lg:hidden grid place-items-center w-11 h-11 rounded-full hover:bg-cream-100 tap"
@@ -59,20 +59,56 @@
                             @yield('header_subtitle', 'Sistem Manajemen 4G Cake & Cookies')</p>
                     </div>
                     <div class="ml-auto flex items-center gap-2">
-                        <div
-                            class="hidden xl:flex items-center gap-2 rounded-full bg-white border border-cream-200 px-3.5 py-2 w-64">
-                            <i data-lucide="search" class="w-4 h-4 text-cocoa-300"></i>
-                            <input type="search" aria-label="Pencarian global panel admin"
-                                placeholder="Cari apa saja&hellip;"
-                                class="bg-transparent text-sm outline-none w-full placeholder:text-cocoa-300"
-                                onkeydown="if(event.key==='Enter'){toast('Pencarian global belum aktif di prototype.','info');}">
+                        <div x-data="pencarianGlobalAdmin()" class="relative hidden xl:block" @keydown.escape.window="buka=false" @click.outside="buka=false">
+                            <div class="flex items-center gap-2 rounded-full bg-white border border-cream-200 px-3.5 py-2 w-64 focus-within:border-rose-300">
+                                <i data-lucide="search" class="w-4 h-4 text-cocoa-300 shrink-0"></i>
+                                <input type="search" aria-label="Pencarian global panel admin" x-model="q" @input.debounce.350ms="cari()"
+                                    @focus="if (hasil) buka = true"
+                                    placeholder="Cari apa saja&hellip;"
+                                    class="bg-transparent text-sm outline-none w-full placeholder:text-cocoa-300">
+                            </div>
+                            <div x-show="buka" x-cloak x-transition
+                                class="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto rounded-2xl bg-white border border-cream-200 shadow-xl p-2 z-40">
+                                <template x-if="mencari"><p class="text-xs text-cocoa-300 text-center py-4">Mencari&hellip;</p></template>
+                                <template x-if="!mencari && hasil && totalHasil === 0"><p class="text-xs text-cocoa-300 text-center py-4">Tidak ada hasil untuk "<span x-text="q"></span>".</p></template>
+                                <template x-if="!mencari && hasil">
+                                    <div class="space-y-3">
+                                        <template x-for="grup in [{k:'produk',label:'Produk',ikon:'cake'},{k:'pesanan',label:'Pesanan',ikon:'receipt-text'},{k:'pengguna',label:'Pengguna',ikon:'users'}]" :key="grup.k">
+                                            <div x-show="hasil[grup.k] && hasil[grup.k].length">
+                                                <p class="text-[10px] font-semibold text-cocoa-300 uppercase tracking-wide px-2 mb-1" x-text="grup.label"></p>
+                                                <template x-for="(item, i) in hasil[grup.k]" :key="grup.k + i">
+                                                    <a :href="item.link" class="flex items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-cream-100 transition">
+                                                        <i :data-lucide="grup.ikon" class="w-4 h-4 text-cocoa-300 shrink-0"></i>
+                                                        <span class="text-sm text-cocoa-600 truncate" x-text="item.label"></span>
+                                                    </a>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                        <button onclick="toast('3 pesanan baru menunggu konfirmasi.','info','Notifikasi')"
-                            class="relative grid place-items-center w-11 h-11 rounded-full bg-white border border-cream-200 hover:bg-cream-100 transition tap"
-                            aria-label="Notifikasi admin">
-                            <i data-lucide="bell" class="w-[18px] h-[18px] text-cocoa-500"></i>
-                            <span class="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
-                        </button>
+                        <div x-data="notifikasiAdmin()" x-init="init()" class="relative" @keydown.escape.window="buka=false" @click.outside="buka=false">
+                            <button @click="buka = !buka; if (buka) muat()"
+                                class="relative grid place-items-center w-11 h-11 rounded-full bg-white border border-cream-200 hover:bg-cream-100 transition tap"
+                                aria-label="Notifikasi admin">
+                                <i data-lucide="bell" class="w-[18px] h-[18px] text-cocoa-500"></i>
+                                <span x-show="total > 0" class="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
+                            </button>
+                            <div x-show="buka" x-cloak x-transition class="absolute right-0 mt-2 w-80 rounded-2xl bg-white border border-cream-200 shadow-xl p-2 z-40">
+                                <p class="text-[10px] font-semibold text-cocoa-300 uppercase tracking-wide px-2 py-1.5">Notifikasi</p>
+                                <template x-if="memuat"><p class="text-xs text-cocoa-300 text-center py-6">Memuat&hellip;</p></template>
+                                <template x-if="!memuat && items.length === 0"><p class="text-xs text-cocoa-300 text-center py-6">Tidak ada yang perlu diperhatikan saat ini.</p></template>
+                                <template x-for="(n, i) in items" :key="i">
+                                    <a :href="n.link" class="flex items-start gap-2.5 rounded-xl px-2 py-2.5 hover:bg-cream-100 transition">
+                                        <span class="grid place-items-center w-8 h-8 rounded-lg shrink-0" :class="n.tipe === 'warning' ? 'bg-[#FEF4E2] text-[#96650B]' : 'bg-cream-100 text-cocoa-500'">
+                                            <i :data-lucide="n.ikon" class="w-4 h-4"></i>
+                                        </span>
+                                        <span class="text-sm text-cocoa-600 leading-snug" x-text="n.pesan"></span>
+                                    </a>
+                                </template>
+                            </div>
+                        </div>
                         <span
                             class="hidden sm:grid place-items-center w-10 h-10 rounded-full bg-gold-400 text-white font-semibold text-xs uppercase">{{ substr(Auth::user()->name ?? 'A', 0, 2) }}</span>
                     </div>
@@ -84,7 +120,7 @@
                 @yield('content')
             </main>
 
-            <footer class="px-4 sm:px-6 lg:px-8 py-6 text-xs text-cocoa-300 border-t border-cream-200 mt-auto flex items-center gap-3">
+            <footer id="admin-footer" class="px-4 sm:px-6 lg:px-8 py-6 text-xs text-cocoa-300 border-t border-cream-200 mt-auto flex items-center gap-3">
                 <img src="{{ asset('assets/img/logo_4g.png') }}" alt="Logo" class="h-6 w-auto opacity-50 grayscale">
                 <span>&copy; {{ date('Y') }} 4G Cake &amp; Cookies &middot; Panel admin prototype</span>
             </footer>
@@ -133,6 +169,44 @@
     <script src="{{ asset('assets/js/data.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+
+    <script>
+      function pencarianGlobalAdmin() {
+        return {
+          q: '', buka: false, mencari: false, hasil: null,
+          get totalHasil() {
+            if (!this.hasil) return 0;
+            return (this.hasil.produk?.length || 0) + (this.hasil.pesanan?.length || 0) + (this.hasil.pengguna?.length || 0);
+          },
+          cari() {
+            const q = this.q.trim();
+            if (q.length < 2) { this.hasil = null; this.buka = false; return; }
+            this.mencari = true; this.buka = true;
+            fetch(`{{ url('admin/search') }}?q=${encodeURIComponent(q)}`, { headers: { 'Accept': 'application/json' } })
+              .then(res => res.json())
+              .then(data => { this.hasil = data; })
+              .catch(() => { this.hasil = { produk: [], pesanan: [], pengguna: [] }; })
+              .finally(() => { this.mencari = false; this.$nextTick(() => icons()); });
+          }
+        };
+      }
+
+      function notifikasiAdmin() {
+        return {
+          buka: false, memuat: false, items: [], total: 0, sudahMuat: false,
+          init() { this.muat(); },
+          muat() {
+            if (this.memuat) return;
+            this.memuat = true;
+            fetch(`{{ url('admin/notifikasi') }}`, { headers: { 'Accept': 'application/json' } })
+              .then(res => res.json())
+              .then(data => { this.items = data.items || []; this.total = data.total || 0; })
+              .catch(() => { this.items = []; this.total = 0; })
+              .finally(() => { this.memuat = false; this.sudahMuat = true; this.$nextTick(() => icons()); });
+          }
+        };
+      }
+    </script>
 
     @if(session('success_toast'))
         <script>document.addEventListener('DOMContentLoaded', () => setTimeout(() => toast("{{ session('success_toast') }}", 'success', 'Berhasil'), 300));</script>

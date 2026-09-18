@@ -56,10 +56,10 @@
       <div>
         <h3 class="font-display font-semibold text-white text-sm mb-4">Hubungi Kami</h3>
         <ul class="space-y-3 text-sm text-cream-200/70">
-          <li class="flex gap-2.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 mt-0.5 text-rose-300"></i><span>Jl.
-              Samudera No. 12, Banda Sakti,<br>Lhokseumawe, Aceh</span></li>
+          <li class="flex gap-2.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 mt-0.5 text-rose-300"></i><span>Gg.
+              Kb. Jukut 4 No.18/26, Ciroyom,<br>Kec. Andir, Kota Bandung, Jawa Barat 40182</span></li>
           <li class="flex gap-2.5"><i data-lucide="phone"
-              class="w-4 h-4 shrink-0 mt-0.5 text-rose-300"></i><span>0812-6070-4004</span></li>
+              class="w-4 h-4 shrink-0 mt-0.5 text-rose-300"></i><span>0877-1439-1814</span></li>
           <li class="flex gap-2.5"><i data-lucide="mail"
               class="w-4 h-4 shrink-0 mt-0.5 text-rose-300"></i><span>halo@4gcake.id</span></li>
         </ul>

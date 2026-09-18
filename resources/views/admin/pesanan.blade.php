@@ -86,7 +86,7 @@
                     <i data-lucide="eye" class="w-4 h-4"></i></button>
                   <button @click="bukaStatus(o)" class="icon-btn tap" title="Ubah status">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
-                  <button @click="toast('Struk pesanan ' + o.kode + ' dikirim ke printer.','info')" class="icon-btn tap" title="Cetak struk">
+                  <button @click="cetakStruk(o)" class="icon-btn tap" title="Cetak struk">
                     <i data-lucide="printer" class="w-4 h-4"></i></button>
                 </div>
               </td>
@@ -467,7 +467,7 @@
             'ongkir' => (int) ($o->shipping_fee ?? 0),
             'bayar' => $bayarText,
             'bukti_bayar' => $buktiUrl,
-            'resi' => $o->tracking_number,
+            'resi' => optional($o->shipping)->tracking_number,
             'items' => $items
         ];
     })->values()->all();
@@ -503,6 +503,49 @@
       },
 
       formatRp(n) { return 'Rp' + Number(n || 0).toLocaleString('id-ID'); },
+
+      cetakStruk(o) {
+        const baris = o.items.map(it => `
+          <tr>
+            <td>${it.nama}${it.varian ? ' (' + it.varian + ')' : ''}</td>
+            <td style="text-align:center">${it.qty}</td>
+            <td style="text-align:right">${this.formatRp(it.harga)}</td>
+            <td style="text-align:right">${this.formatRp(it.harga * it.qty)}</td>
+          </tr>`).join('');
+
+        const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>Struk ${o.kode}</title>
+        <style>
+          body{font-family:'Courier New',monospace;max-width:340px;margin:24px auto;color:#222;font-size:13px;}
+          h1{font-size:16px;text-align:center;margin:0 0 2px}
+          .sub{text-align:center;font-size:11px;color:#555;margin-bottom:14px}
+          hr{border:none;border-top:1px dashed #999;margin:10px 0}
+          table{width:100%;border-collapse:collapse}
+          td{padding:3px 0;vertical-align:top}
+          .total td{font-weight:bold;font-size:14px;padding-top:6px}
+        </style></head><body>
+        <h1>4G Cake &amp; Cookies</h1>
+        <p class="sub">Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung</p>
+        <hr>
+        <p>No. Pesanan: <b>${o.kode}</b><br>Tanggal: ${this.tglID(o.tanggal)}<br>Pelanggan: ${o.pelanggan} (${o.hp})<br>Metode: ${o.metode}</p>
+        <hr>
+        <table><thead><tr><td>Item</td><td style="text-align:center">Qty</td><td style="text-align:right">Harga</td><td style="text-align:right">Subtotal</td></tr></thead>
+        <tbody>${baris}</tbody></table>
+        <hr>
+        <table>
+          <tr><td>Ongkos kirim</td><td style="text-align:right">${this.formatRp(o.ongkir || 0)}</td></tr>
+          <tr class="total"><td>TOTAL</td><td style="text-align:right">${this.formatRp(o.total)}</td></tr>
+        </table>
+        <hr>
+        <p style="text-align:center">Pembayaran: ${o.bayar}<br>Terima kasih sudah berbelanja!</p>
+        </body></html>`;
+
+        const w = window.open('', '_blank', 'width=420,height=640');
+        if (!w) { toast('Izinkan pop-up di browser untuk mencetak struk.', 'error'); return; }
+        w.document.write(html);
+        w.document.close();
+        w.focus();
+        setTimeout(() => w.print(), 300);
+      },
       
       tglID(tgl) { 
          if (!tgl || tgl === '-') return '-';
@@ -575,8 +618,7 @@
                 const labelLama = this.STATUS_PESANAN[this.aktif.status] ? this.STATUS_PESANAN[this.aktif.status].label : this.aktif.status;
                 const labelBaru = this.STATUS_PESANAN[this.statusBaru] ? this.STATUS_PESANAN[this.statusBaru].label : this.statusBaru;
                 this.aktif.status = this.statusBaru;
-                if (data.tracking_number) this.aktif.resi = data.tracking_number; 
-                
+
                 if(typeof toast === 'function') toast(`${this.aktif.kode}: ${labelLama} → ${labelBaru}`, 'success');
                 this.statusModal = false;
                 this.$nextTick(() => { if(typeof icons === 'function') icons() });

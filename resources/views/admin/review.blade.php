@@ -13,17 +13,32 @@
         ->select('reviews.*', 'users.name as user_name', 'products.name as product_name', 'products.slug as product_slug', 'products.photo_main', 'products.photos')
         ->orderBy('reviews.created_at', 'desc');
         
-    $mappedReviews = $reviewsQuery->get()->map(function($r) {
+    // Palet warna gradasi yang sama dengan testimoni di beranda, supaya avatar
+    // pelanggan yang sama juga tampil dengan warna yang sama di kedua halaman.
+    $paletWarnaReview = [
+        'from-rose-400 to-rose-600',
+        'from-blue-400 to-blue-600',
+        'from-emerald-400 to-emerald-600',
+        'from-amber-400 to-amber-600',
+        'from-purple-400 to-purple-600',
+        'from-teal-400 to-teal-600',
+        'from-indigo-400 to-indigo-600',
+        'from-fuchsia-400 to-fuchsia-600',
+    ];
+
+    $mappedReviews = $reviewsQuery->get()->map(function($r) use ($paletWarnaReview) {
         $fotoDb = $r->photo_main;
         if (!$fotoDb && $r->photos) {
             $pArr = is_string($r->photos) ? json_decode($r->photos, true) : $r->photos;
             if (is_array($pArr) && count($pArr) > 0) $fotoDb = $pArr[0];
         }
         $fotoAsli = $fotoDb ? asset('storage/' . $fotoDb) : asset('assets/img/products/placeholder.svg');
+        $namaPelanggan = $r->user_name ?? 'Pelanggan';
+        $indeksWarna = abs(crc32($namaPelanggan)) % count($paletWarnaReview);
 
         return [
             'id' => $r->id,
-            'nama' => $r->user_name ?? 'Pelanggan',
+            'nama' => $namaPelanggan,
             'produk' => $r->product_name,
             'slug' => $r->product_slug,
             'foto' => $fotoAsli, 
@@ -32,6 +47,7 @@
             'balasan' => $r->admin_reply ?? '',
             'tgl' => \Carbon\Carbon::parse($r->created_at)->format('Y-m-d'),
             'disembunyikan' => (bool) $r->is_hidden,
+            'warna' => $paletWarnaReview[$indeksWarna],
         ];
     })->values()->all();
 @endphp
@@ -112,7 +128,7 @@
         <template x-for="(r, i) in paginatedHasil" :key="r.id">
           <article class="p-5 sm:p-6" :class="r.disembunyikan && 'bg-cream-50 opacity-75'">
             <div class="flex items-start gap-3 mb-3">
-              <span class="grid place-items-center w-10 h-10 rounded-full bg-rose-500 text-white text-xs font-semibold shrink-0 uppercase" x-text="r.nama.substring(0,2)"></span>
+              <span class="grid place-items-center w-10 h-10 rounded-full bg-gradient-to-br text-white text-xs font-semibold shrink-0 uppercase" :class="r.warna" x-text="r.nama.substring(0,2)"></span>
               <div class="min-w-0 flex-1">
                 <p class="font-semibold text-sm text-cocoa-700" x-text="r.nama"></p>
                 <p class="text-[11px] text-cocoa-300"><span x-text="typeof tglID === 'function' ? tglID(r.tgl) : r.tgl"></span> &middot; <span x-text="r.produk"></span></p>

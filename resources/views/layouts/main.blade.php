@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="4G Cake & Cookies — cake, cookies, brownies, dan dessert box homemade di Lhokseumawe. Pesan online, pilih tanggal ambil atau kirim.">
-  <title>@yield('title', 'Kue rumahan Lhokseumawe &middot; 4G Cake & Cookies')</title>
+    content="4G Cake & Cookies — cake, cookies, brownies, dan dessert box homemade di Bandung. Pesan online, pilih tanggal ambil atau kirim.">
+  <title>@yield('title', 'Kue rumahan Bandung &middot; 4G Cake & Cookies')</title>
   <link rel="icon" href="{{ asset('assets/img/logo_4g.png') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

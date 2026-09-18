@@ -25,7 +25,7 @@
 @endphp
 
 <div x-show="sidebar" x-cloak @click="sidebar=false" class="fixed inset-0 z-40 bg-cocoa-700/40 backdrop-blur-sm lg:hidden"></div>
-<aside :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
+<aside id="admin-sidebar" :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
        class="fixed lg:sticky top-0 z-50 h-screen w-[268px] shrink-0 bg-white border-r border-cream-200 flex flex-col transition-transform duration-300 lg:translate-x-0">
   
   <!-- LOGO ADMIN SIDEBAR -->
@@ -62,18 +62,22 @@
         <span class="ml-auto badge {{ request()->routeIs('admin.pengiriman.*') ? 'bg-white/20 text-white' : 'badge-rose' }} !px-2 !py-0.5">{{ $jmlPengiriman }}</span>
       @endif
     </a>
+    @if((Auth::user()->role ?? null) === 'owner')
     <a href="{{ route('admin.keuangan.index') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('admin.keuangan.*') ? 'bg-rose-500 text-white shadow-[0_10px_22px_-12px_rgba(197,104,104,.95)]' : 'text-cocoa-500 hover:bg-cream-100 hover:text-cocoa-700' }}">
       <i data-lucide="wallet" class="w-[18px] h-[18px] shrink-0"></i><span>Keuangan</span>
     </a>
     <a href="{{ route('admin.laporan.index') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('admin.laporan.*') ? 'bg-rose-500 text-white shadow-[0_10px_22px_-12px_rgba(197,104,104,.95)]' : 'text-cocoa-500 hover:bg-cream-100 hover:text-cocoa-700' }}">
       <i data-lucide="file-bar-chart" class="w-[18px] h-[18px] shrink-0"></i><span>Laporan</span>
     </a>
+    @endif
     <a href="{{ route('admin.review.index') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('admin.review.*') ? 'bg-rose-500 text-white shadow-[0_10px_22px_-12px_rgba(197,104,104,.95)]' : 'text-cocoa-500 hover:bg-cream-100 hover:text-cocoa-700' }}">
       <i data-lucide="star" class="w-[18px] h-[18px] shrink-0"></i><span>Manajemen Review</span>
     </a>
+    @if((Auth::user()->role ?? null) === 'owner')
     <a href="{{ route('admin.pengguna.index') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ request()->routeIs('admin.pengguna.*') ? 'bg-rose-500 text-white shadow-[0_10px_22px_-12px_rgba(197,104,104,.95)]' : 'text-cocoa-500 hover:bg-cream-100 hover:text-cocoa-700' }}">
       <i data-lucide="users" class="w-[18px] h-[18px] shrink-0"></i><span>Pengguna & Role</span>
     </a>
+    @endif
     
     <div class="my-3 h-px bg-cream-200"></div>
     

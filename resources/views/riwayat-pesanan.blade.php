@@ -260,7 +260,7 @@
             'metode' => $metode_pengiriman,
             'status' => $statusMap[strtolower($o->status ?? 'menunggu_pembayaran')] ?? 'menunggu',
             'total' => (int) ($o->total_amount ?? $o->total ?? 0),
-            'resi' => $o->tracking_number && $o->tracking_number !== '-' ? $o->tracking_number : '-',
+            'resi' => optional($o->shipping)->tracking_number ?: '-',
             'alamat' => $alamat,
             'sudah_diulas' => $sudahDiulas,
             'url_ulasan' => url('/produk/' . $slugPertama) . '#ulasan',

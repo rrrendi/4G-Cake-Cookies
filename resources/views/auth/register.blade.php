@@ -60,7 +60,7 @@
         <p class="text-sm text-cream-200/60">Bergabung dengan 620+ pelanggan tetap kami</p>
       </div>
     </div>
-    <p class="relative text-xs text-cream-200/40">&copy; 2026 4G Cake &amp; Cookies &middot; Lhokseumawe, Aceh</p>
+    <p class="relative text-xs text-cream-200/40">&copy; 2026 4G Cake &amp; Cookies &middot; Bandung, Jawa Barat</p>
   </div>
 
   <div class="flex flex-col justify-center px-5 sm:px-10 lg:px-16 py-10 lg:py-16">

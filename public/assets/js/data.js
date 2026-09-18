@@ -118,48 +118,48 @@ const STATUS_KIRIM = {
 const PESANAN = [
   { kode:'4G-260901-002', pelanggan:'Nadia Safitri', hp:'0812-3344-5566', email:'nadia.safitri@gmail.com',
     tanggal:'2026-09-01', jamPesan:'09:24', ambil:'2026-09-04', jam:'13.00 – 15.00',
-    metode:'J&T', status:'menunggu', total:350000, ongkir:22000, bayar:'Transfer BCA',
-    alamat:'Jl. Merdeka No. 45, Kec. Banda Sakti, Lhokseumawe, Aceh 24351', resi:'-', catatan:'Tulisan di atas kue: "Selamat Ulang Tahun Aira".',
+    metode:'J&T', status:'menunggu', total:350000, ongkir:20000, bayar:'Transfer BCA',
+    alamat:'Jl. Merdeka No. 45, Kec. Coblong, Kota Bandung, Jawa Barat 40132', resi:'-', catatan:'Tulisan di atas kue: "Selamat Ulang Tahun Aira".',
     items:[{nama:'Birthday Cake Custom', qty:1, harga:350000, slug:'birthday-cake-custom', varian:'1 kg'}] },
   { kode:'4G-260901-001', pelanggan:'Rizky Ananda', hp:'0813-2211-9080', email:'rizky.ananda@gmail.com',
     tanggal:'2026-09-01', jamPesan:'07:58', ambil:'2026-09-03', jam:'11.00 – 13.00',
     metode:'Ambil di Tempat', status:'diproses', total:196000, ongkir:0, bayar:'Transfer BCA',
-    alamat:'Ambil di toko — Jl. Samudera No. 12, Banda Sakti, Lhokseumawe', resi:'-', catatan:'Brownies dipisah dua box ya.',
+    alamat:'Ambil di toko — Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung', resi:'-', catatan:'Brownies dipisah dua box ya.',
     items:[{nama:'Brownies Kukus Premium', qty:2, harga:65000, slug:'brownies-kukus', varian:'Topping Keju'},
            {nama:'Choco Chip Cookies', qty:1, harga:48000, slug:'choco-chip-cookies', varian:'Toples 250 gr'},
            {nama:'Choco Lava Cake', qty:1, harga:42000, slug:'choco-lava-cake', varian:'Isi 2 pcs'}] },
   { kode:'4G-260831-001', pelanggan:'Putri Maharani', hp:'0852-7788-1122', email:'putri.mhr@gmail.com',
     tanggal:'2026-08-31', jamPesan:'19:12', ambil:'2026-09-03', jam:'09.00 – 11.00',
-    metode:'J&T', status:'dikemas', total:297000, ongkir:22000, bayar:'Transfer Mandiri',
-    alamat:'Jl. Darussalam No. 9, Kota Langsa, Aceh 24354', resi:'-', catatan:'',
+    metode:'J&T', status:'dikemas', total:297000, ongkir:15000, bayar:'Transfer Mandiri',
+    alamat:'Jl. Darussalam No. 9, Kota Cimahi, Jawa Barat 40521', resi:'-', catatan:'',
     items:[{nama:'Nastar & Kastengel Spesial', qty:1, harga:95000, slug:'nastar-kastengel', varian:'Paket 2 toples'},
            {nama:'Cheese Cake Jepang', qty:1, harga:175000, slug:'cheese-cake-jepang', varian:'Diameter 16 cm'}] },
   { kode:'4G-260830-001', pelanggan:'Ahmad Fauzan', hp:'0821-4455-6677', email:'a.fauzan21@gmail.com',
     tanggal:'2026-08-30', jamPesan:'10:41', ambil:'2026-09-02', jam:'13.00 – 15.00',
-    metode:'J&T', status:'dikirim', total:340000, ongkir:25000, bayar:'Transfer BCA',
-    alamat:'Jl. Cut Meutia No. 88, Bireuen, Aceh 24261', resi:'JT8842190365', catatan:'Tolong tambah bubble wrap.',
+    metode:'J&T', status:'dikirim', total:340000, ongkir:20000, bayar:'Transfer BCA',
+    alamat:'Jl. Cut Meutia No. 88, Kabupaten Bandung, Jawa Barat 40378', resi:'JT8842190365', catatan:'Tolong tambah bubble wrap.',
     items:[{nama:'Hampers Lebaran Cookies', qty:1, harga:275000, slug:'hampers-lebaran', varian:'Keranjang Rotan'},
            {nama:'Dessert Box Tiramisu', qty:1, harga:55000, slug:'dessert-box-tiramisu', varian:'Box 350 ml'}] },
   { kode:'4G-260829-001', pelanggan:'Siti Kamila', hp:'0857-9900-3344', email:'siti.kamila@gmail.com',
     tanggal:'2026-08-29', jamPesan:'08:03', ambil:'2026-08-31', jam:'15.00 – 17.00',
     metode:'Ambil di Tempat', status:'selesai', total:285000, ongkir:0, bayar:'Tunai',
-    alamat:'Ambil di toko — Jl. Samudera No. 12, Banda Sakti, Lhokseumawe', resi:'-', catatan:'',
+    alamat:'Ambil di toko — Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung', resi:'-', catatan:'',
     items:[{nama:'Red Velvet Cake', qty:1, harga:285000, slug:'red-velvet-cake', varian:'1 kg (18 cm)'}] },
   { kode:'4G-260828-001', pelanggan:'Dedi Kurniawan', hp:'0811-2233-4455', email:'dedi.kurniawan@gmail.com',
     tanggal:'2026-08-28', jamPesan:'16:35', ambil:'2026-08-30', jam:'09.00 – 11.00',
-    metode:'J&T', status:'selesai', total:151000, ongkir:20000, bayar:'Transfer BCA',
-    alamat:'Jl. Iskandar Muda No. 3, Lhokseumawe, Aceh 24351', resi:'JT8842118742', catatan:'',
+    metode:'J&T', status:'selesai', total:151000, ongkir:10000, bayar:'Transfer BCA',
+    alamat:'Jl. Iskandar Muda No. 3, Kota Bandung, Jawa Barat 40173', resi:'JT8842118742', catatan:'',
     items:[{nama:'Bolu Pandan Keju', qty:1, harga:85000, slug:'bolu-pandan-keju', varian:'Loyang tulban'},
            {nama:'Dessert Box Oreo Cheese', qty:1, harga:58000, slug:'dessert-box-oreo', varian:'Box 350 ml'}] },
   { kode:'4G-260827-001', pelanggan:'Fitri Handayani', hp:'0895-6677-8899', email:'fitrihandayani@gmail.com',
     tanggal:'2026-08-27', jamPesan:'21:07', ambil:'2026-08-29', jam:'11.00 – 13.00',
-    metode:'J&T', status:'dibatalkan', total:110000, ongkir:22000, bayar:'Belum dibayar',
-    alamat:'Jl. Pase No. 21, Lhokseumawe, Aceh 24351', resi:'-', catatan:'',
+    metode:'J&T', status:'dibatalkan', total:110000, ongkir:10000, bayar:'Belum dibayar',
+    alamat:'Jl. Pase No. 21, Kota Bandung, Jawa Barat 40243', resi:'-', catatan:'',
     items:[{nama:'Dessert Box Tiramisu', qty:2, harga:55000, slug:'dessert-box-tiramisu', varian:'Box 350 ml'}] },
   { kode:'4G-260826-001', pelanggan:'Bayu Pratama', hp:'0838-1010-2020', email:'bayu.pratama@gmail.com',
     tanggal:'2026-08-26', jamPesan:'13:50', ambil:'2026-08-28', jam:'17.00 – 19.00',
     metode:'Ambil di Tempat', status:'selesai', total:190000, ongkir:0, bayar:'Tunai',
-    alamat:'Ambil di toko — Jl. Samudera No. 12, Banda Sakti, Lhokseumawe', resi:'-', catatan:'',
+    alamat:'Ambil di toko — Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung', resi:'-', catatan:'',
     items:[{nama:'Nastar & Kastengel Spesial', qty:2, harga:95000, slug:'nastar-kastengel', varian:'Paket 2 toples'}] }
 ];
 
@@ -189,17 +189,17 @@ const JADWAL = [
 
 /* ------------------------------------------------------------ PENGIRIMAN -- */
 const PENGIRIMAN = [
-  { kode:'4G-260830-001', pelanggan:'Ahmad Fauzan', kota:'Bireuen', resi:'JT8842190365',
-    status:'jalan', kurir:'J&T Express', ongkir:25000, tanggalKirim:'2026-09-01', update:'2026-09-01 14:20' },
-  { kode:'4G-260831-001', pelanggan:'Putri Maharani', kota:'Kota Langsa', resi:'-',
-    status:'pickup', kurir:'J&T Express', ongkir:22000, tanggalKirim:'-', update:'2026-09-01 09:05' },
-  { kode:'4G-260901-002', pelanggan:'Nadia Safitri', kota:'Lhokseumawe', resi:'-',
-    status:'pickup', kurir:'J&T Express', ongkir:22000, tanggalKirim:'-', update:'2026-09-01 08:40' },
-  { kode:'4G-260828-001', pelanggan:'Dedi Kurniawan', kota:'Lhokseumawe', resi:'JT8842118742',
-    status:'sampai', kurir:'J&T Express', ongkir:20000, tanggalKirim:'2026-08-29', update:'2026-08-30 16:10' },
-  { kode:'4G-260825-001', pelanggan:'Rani Oktaviani', kota:'Aceh Utara', resi:'JT8841990233',
+  { kode:'4G-260830-001', pelanggan:'Ahmad Fauzan', kota:'Kabupaten Bandung', resi:'JT8842190365',
+    status:'jalan', kurir:'J&T Express', ongkir:20000, tanggalKirim:'2026-09-01', update:'2026-09-01 14:20' },
+  { kode:'4G-260831-001', pelanggan:'Putri Maharani', kota:'Kota Cimahi', resi:'-',
+    status:'pickup', kurir:'J&T Express', ongkir:15000, tanggalKirim:'-', update:'2026-09-01 09:05' },
+  { kode:'4G-260901-002', pelanggan:'Nadia Safitri', kota:'Kota Bandung', resi:'-',
+    status:'pickup', kurir:'J&T Express', ongkir:10000, tanggalKirim:'-', update:'2026-09-01 08:40' },
+  { kode:'4G-260828-001', pelanggan:'Dedi Kurniawan', kota:'Kota Bandung', resi:'JT8842118742',
+    status:'sampai', kurir:'J&T Express', ongkir:10000, tanggalKirim:'2026-08-29', update:'2026-08-30 16:10' },
+  { kode:'4G-260825-001', pelanggan:'Rani Oktaviani', kota:'Kabupaten Bandung Barat', resi:'JT8841990233',
     status:'sampai', kurir:'J&T Express', ongkir:20000, tanggalKirim:'2026-08-24', update:'2026-08-25 11:35' },
-  { kode:'4G-260824-001', pelanggan:'Maulida Zahra', kota:'Banda Aceh', resi:'JT8842203118',
+  { kode:'4G-260824-001', pelanggan:'Maulida Zahra', kota:'Kabupaten Sumedang', resi:'JT8842203118',
     status:'kurir', kurir:'J&T Express', ongkir:30000, tanggalKirim:'2026-08-24', update:'2026-08-24 08:15' }
 ];
 
@@ -303,6 +303,6 @@ const SLOT_JAM = ['09.00 – 11.00','11.00 – 13.00','13.00 – 15.00','15.00 �
 
 /* Ongkir per kota tujuan (dummy) */
 const ONGKIR_KOTA = {
-  'Lhokseumawe': 20000, 'Aceh Utara': 22000, 'Bireuen': 25000,
-  'Kota Langsa': 25000, 'Banda Aceh': 30000
+  'Kota Bandung': 10000, 'Kota Cimahi': 15000, 'Kabupaten Bandung': 20000,
+  'Kabupaten Bandung Barat': 20000, 'Kabupaten Sumedang': 30000
 };

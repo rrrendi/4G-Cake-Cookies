@@ -11,7 +11,10 @@ class OrderController extends Controller
     public function index()
     {
         // PERBAIKAN: Hanya mengambil pesanan milik user yang sedang login
+        // 'shipping' ditambahkan supaya nomor resi ambil dari data Manajemen Pengiriman,
+        // bukan kolom yang tidak pernah ada di tabel orders.
         $orders = Order::where('user_id', Auth::id())
+                       ->with(['items.product', 'shipping'])
                        ->latest()
                        ->get();
         

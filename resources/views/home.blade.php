@@ -21,7 +21,7 @@
       <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div class="fade-up">
           <span class="badge badge-rose mb-5">
-            <i data-lucide="heart" class="w-3.5 h-3.5"></i> Dibuat fresh setiap hari di Lhokseumawe
+            <i data-lucide="heart" class="w-3.5 h-3.5"></i> Dibuat fresh setiap hari di Bandung
           </span>
           <h1 class="font-display font-bold text-cocoa-700 text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] mb-5">
             Kue rumahan yang<br class="hidden sm:block">
@@ -47,10 +47,15 @@
             </div>
             <span class="hidden sm:block w-px h-10 bg-cream-200"></span>
             <div>
-              <p class="font-display font-bold text-2xl text-cocoa-700 flex items-center gap-1.5">4.8
-                <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
-              </p>
-              <p class="text-xs text-cocoa-300">Dari 620 ulasan pelanggan</p>
+              @if($totalUlasan > 0)
+                <p class="font-display font-bold text-2xl text-cocoa-700 flex items-center gap-1.5">{{ number_format($rataRating, 1) }}
+                  <i data-lucide="star" class="w-4 h-4 star fill-current"></i>
+                </p>
+                <p class="text-xs text-cocoa-300">Dari {{ number_format($totalUlasan, 0, ',', '.') }} ulasan pelanggan</p>
+              @else
+                <p class="font-display font-bold text-2xl text-cocoa-700">Baru</p>
+                <p class="text-xs text-cocoa-300">Belum ada ulasan pelanggan</p>
+              @endif
             </div>
             <span class="hidden sm:block w-px h-10 bg-cream-200"></span>
             <div>
@@ -156,7 +161,7 @@
             Dapur rumahan kecil yang menolak jadi pabrik
           </h2>
           <p class="text-cocoa-400 leading-relaxed mb-4">
-            4G Cake &amp; Cookies berdiri tahun 2019 di Lhokseumawe, berawal dari pesanan tetangga
+            4G Cake &amp; Cookies berdiri tahun 2019 di Bandung, berawal dari pesanan tetangga
             yang kebetulan mencicipi brownies buatan Ibu Gustina. Sampai hari ini semua adonan
             masih dikerjakan tangan, dalam jumlah terbatas per hari.
           </p>

@@ -34,7 +34,7 @@
       <div class="flex items-end gap-2">
         <button @click="ekspor('PDF')" class="btn btn-outline flex-1"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
         <button @click="ekspor('Excel')" class="btn btn-outline flex-1"><i data-lucide="sheet" class="w-4 h-4"></i> Excel</button>
-        <button @click="window.print()" class="btn btn-ghost !px-3" title="Cetak"><i data-lucide="printer" class="w-4 h-4"></i></button>
+        <button @click="cetak()" class="btn btn-ghost !px-3" title="Cetak"><i data-lucide="printer" class="w-4 h-4"></i></button>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
         <span class="grid place-items-center w-12 h-12 rounded-2xl bg-rose-500 text-white font-display font-bold">4G</span>
         <div>
           <p class="font-display font-bold text-lg text-cocoa-700">4G Cake &amp; Cookies</p>
-          <p class="text-xs text-cocoa-300">Jl. Samudera No. 12, Banda Sakti, Lhokseumawe, Aceh</p>
+          <p class="text-xs text-cocoa-300">Gg. Kb. Jukut 4 No.18/26, Ciroyom, Kec. Andir, Kota Bandung</p>
         </div>
       </div>
       <div class="text-right">
@@ -95,7 +95,7 @@
           </tr>
         </thead>
         <tbody>
-          <template x-for="(r, i) in baris" :key="i">
+          <template x-for="(r, i) in barisHalamanIni" :key="i">
             <tr>
               <template x-for="(sel, j) in r" :key="j">
                 <td :class="j === r.length - 1 ? 'text-right font-medium text-cocoa-700 whitespace-nowrap' : 'text-cocoa-500'" x-html="sel"></td>
@@ -118,13 +118,25 @@
       <p class="text-sm text-cocoa-400">Coba perlebar rentang tanggalnya.</p>
     </div>
 
+    <!-- PAGINASI TABEL LAPORAN -->
+    <div class="flex flex-wrap items-center justify-between gap-3 px-5 sm:px-6 py-4 border-t border-cream-200 text-sm no-print" x-show="baris.length > perPage">
+      <p class="text-cocoa-400"><span class="font-semibold text-cocoa-700" x-text="barisHalamanIni.length"></span> dari <span x-text="baris.length"></span> baris</p>
+      <div class="flex items-center gap-1">
+        <button @click="halaman--" :disabled="halaman === 1" class="icon-btn tap" :class="halaman === 1 && 'opacity-40 pointer-events-none'" aria-label="Halaman sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <template x-for="n in nomorHalaman" :key="n">
+          <button @click="halaman = n" class="w-9 h-9 rounded-xl text-sm font-medium transition" :class="n===halaman ? 'bg-rose-500 text-white' : 'text-cocoa-500 hover:bg-cream-100'" x-text="n"></button>
+        </template>
+        <button @click="halaman++" :disabled="halaman === totalHalaman" class="icon-btn tap" :class="halaman === totalHalaman && 'opacity-40 pointer-events-none'" aria-label="Halaman berikutnya"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+
     <div class="px-5 sm:px-6 py-5 border-t border-cream-200 grid sm:grid-cols-2 gap-6 text-xs text-cocoa-400">
       <p class="leading-relaxed">
-        Laporan ini dihasilkan otomatis dari data transaksi. Pada fase Laravel, angka diambil langsung dari
-        tabel <span class="font-mono text-cocoa-600">pesanan</span> dan <span class="font-mono text-cocoa-600">keuangan</span>.
+        Laporan ini dihasilkan otomatis dari data transaksi. Angka diambil langsung dari
+        tabel <span class="font-mono text-cocoa-600">orders</span> dan <span class="font-mono text-cocoa-600">financial_transactions</span>.
       </p>
       <div class="sm:text-right">
-        <p class="mb-10">Lhokseumawe, {{ $tanggalCetak }}</p>
+        <p class="mb-10">Bandung, {{ $tanggalCetak }}</p>
         <p class="font-semibold text-cocoa-700">{{ Auth::user()->name ?? 'Gustina Rahmi' }}</p>
         <p class="capitalize">{{ Auth::user()->role === 'owner' ? 'Pemilik 4G Cake & Cookies' : 'Admin 4G Cake & Cookies' }}</p>
       </div>
@@ -139,18 +151,33 @@
   let chartLap = null;
 
   function laporan() {
-    return {
-      // Nilai dummy awal yang pas dengan data Anda
-      dari:'2026-08-25', sampai:'{{ now()->format('Y-m-d') }}', jenis:'penjualan',
+    const pesananSemua = @json($orders);
+    const keuanganSemua = @json($transaksi);
 
-      init() { this.$nextTick(() => { icons(); this.gambar(); });
-               this.$watch('jenis', () => this.$nextTick(() => { this.gambar(); icons(); })); },
+    const STATUS_LABEL = {
+      menunggu_pembayaran: { label: 'Menunggu Pembayaran', cls: 'badge-wait' },
+      diproses:            { label: 'Diproses',            cls: 'badge-process' },
+      dikemas:             { label: 'Dikemas',             cls: 'badge-pack' },
+      dikirim:             { label: 'Dikirim',             cls: 'badge-ship' },
+      selesai:             { label: 'Selesai',             cls: 'badge-done' },
+      dibatalkan:          { label: 'Dibatalkan',          cls: 'badge-cancel' },
+    };
+
+    return {
+      dari:'{{ $dariDefault }}', sampai:'{{ $sampaiDefault }}', jenis:'keuangan',
+      halaman: 1, perPage: 10, modeCetak: false,
+
+      init() {
+        this.$nextTick(() => { icons(); this.gambar(); });
+        this.$watch('jenis', () => { this.halaman = 1; this.$nextTick(() => { this.gambar(); icons(); }); });
+        window.addEventListener('afterprint', () => { this.modeCetak = false; });
+      },
 
       get judul() {
         return { penjualan:'Laporan Penjualan', keuangan:'Laporan Laba Rugi', produk:'Laporan Produk Terjual' }[this.jenis];
       },
-      get pesananPeriode() { return semuaPesanan().filter(o => o.tanggal >= this.dari && o.tanggal <= this.sampai); },
-      get keuPeriode() { return KEUANGAN.filter(e => e.tgl >= this.dari && e.tgl <= this.sampai); },
+      get pesananPeriode() { return pesananSemua.filter(o => o.tanggal >= this.dari && o.tanggal <= this.sampai); },
+      get keuPeriode() { return keuanganSemua.filter(e => e.tgl >= this.dari && e.tgl <= this.sampai); },
       get ringkas() {
         const masuk = this.keuPeriode.filter(e=>e.jenis==='pemasukan').reduce((a,e)=>a+e.nominal,0);
         const keluar = this.keuPeriode.filter(e=>e.jenis==='pengeluaran').reduce((a,e)=>a+e.nominal,0);
@@ -165,7 +192,7 @@
       get baris() {
         if (this.jenis === 'penjualan') {
           return this.pesananPeriode.map(o => [o.kode, tglID(o.tanggal), o.pelanggan, o.metode,
-            `<span class="badge ${STATUS_PESANAN[o.status].cls}">${STATUS_PESANAN[o.status].label}</span>`, rp(o.total)]);
+            `<span class="badge ${(STATUS_LABEL[o.status]||{}).cls || 'badge-neutral'}">${(STATUS_LABEL[o.status]||{}).label || o.status}</span>`, rp(o.total)]);
         }
         if (this.jenis === 'keuangan') {
           return this.keuPeriode.map(e => [tglID(e.tgl),
@@ -174,13 +201,25 @@
         }
         const map = {};
         this.pesananPeriode.forEach(o => o.items.forEach(it => {
-          if (!map[it.nama]) map[it.nama] = { nama:it.nama, harga:it.harga, qty:0 };
+          if (!map[it.nama]) map[it.nama] = { nama:it.nama, kategori:it.kategori, harga:it.harga, qty:0 };
           map[it.nama].qty += it.qty;
         }));
-        return Object.values(map).sort((a,b)=>b.qty-a.qty).map(p => {
-          const prod = PRODUK.find(x => x.nama === p.nama);
-          return [p.nama, prod ? prod.kategori : '-', rp(p.harga), p.qty + ' pcs'];
-        });
+        return Object.values(map).sort((a,b)=>b.qty-a.qty).map(p => [p.nama, p.kategori, rp(p.harga), p.qty + ' pcs']);
+      },
+      get totalHalaman() { return Math.max(1, Math.ceil(this.baris.length / this.perPage)); },
+      get barisHalamanIni() {
+        if (this.modeCetak) return this.baris; // saat cetak/PDF, tampilkan SEMUA baris, bukan cuma 1 halaman
+        const awal = (this.halaman - 1) * this.perPage;
+        return this.baris.slice(awal, awal + this.perPage);
+      },
+      get nomorHalaman() {
+        const total = this.totalHalaman;
+        let awal = Math.max(1, this.halaman - 2);
+        let akhir = Math.min(total, awal + 4);
+        awal = Math.max(1, akhir - 4);
+        const arr = [];
+        for (let i = awal; i <= akhir; i++) arr.push(i);
+        return arr;
       },
       get totalTeks() {
         if (this.jenis === 'penjualan') return rp(this.pesananPeriode.reduce((a,o)=>a+o.total,0));
@@ -190,10 +229,29 @@
 
       terapkan() {
         if (this.dari > this.sampai) { toast('Tanggal awal melewati tanggal akhir.', 'error'); return; }
+        this.halaman = 1;
         toast(`${this.judul} ${tglID(this.dari)} – ${tglID(this.sampai)} dimuat.`, 'success', 'Filter diterapkan');
         this.$nextTick(() => { this.gambar(); icons(); });
       },
-      ekspor(f) { toast('Export laporan disimulasikan. Fitur akan dihubungkan ke Laravel pada Fase 2.', 'info', 'Export ' + f); },
+      ekspor(f) {
+        if (f === 'Excel') {
+          if (!this.baris.length) { toast('Tidak ada data pada rentang ini untuk diunduh.', 'error'); return; }
+          const rows = this.baris.map(r => r.map(sel => String(sel).replace(/<[^>]+>/g, '')));
+          unduhCSV(`${this.jenis}-${this.dari}_${this.sampai}`, this.kolom, rows);
+        } else {
+          toast('Dialog cetak akan terbuka — pilih tujuan "Simpan sebagai PDF" untuk mengunduhnya.', 'info', 'Ekspor PDF');
+          setTimeout(() => this.cetak(), 500);
+        }
+      },
+      cetak() {
+        // PERBAIKAN: sebelumnya window.print() langsung dipanggil di halaman
+        // aktif (ikut mencetak sidebar/topbar admin, dan tabel cuma satu halaman
+        // pagination yang sedang tampil). Sekarang: tampilkan SEMUA baris dulu
+        // (modeCetak), lalu CSS @media print menyembunyikan navigasi panel admin
+        // supaya yang tercetak/di-PDF-kan cuma isi laporannya sendiri.
+        this.modeCetak = true;
+        this.$nextTick(() => { window.print(); });
+      },
 
       gambar() {
         const el = document.getElementById('c-laporan');
@@ -208,15 +266,35 @@
               tooltip:{ backgroundColor:'#3C2A21', padding:12, cornerRadius:10, displayColors:false, callbacks:{ label:c=>c.parsed.y+' pcs' } } },
               scales:{ y:{ beginAtZero:true, grid:{color:'#F7EADB'}, border:{display:false} },
                        x:{ grid:{display:false}, border:{display:false}, ticks:{ font:{size:10}, maxRotation:0, callback(v){ const s=this.getLabelForValue(v); return s.length>14 ? s.slice(0,13)+'…' : s; } } } } } };
+        } else if (this.jenis === 'penjualan') {
+          // PERBAIKAN: sebelumnya jenis "penjualan" ikut menggambar dari data Keuangan
+          // (keuPeriode), padahal seharusnya dari data pesanan asli (pesananPeriode) —
+          // makanya hasil penjualan tidak pernah muncul di grafik.
+          const hari = [...new Set(this.pesananPeriode.map(o=>o.tanggal))].sort();
+          cfg = { type:'line',
+            data:{ labels: hari.map(t=>tglID(t).split(' ').slice(0,2).join(' ')),
+              datasets:[{ label:'Total penjualan',
+                data: hari.map(t=>this.pesananPeriode.filter(o=>o.tanggal===t).reduce((a,o)=>a+o.total,0)),
+                borderColor:'#D97E7E', backgroundColor:'rgba(217,126,126,.14)', fill:true, tension:.35,
+                borderWidth:3, pointRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2 }] },
+            options:{ responsive:true, maintainAspectRatio:false,
+              plugins:{ legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:8, padding:14, font:{size:11} } },
+                tooltip:{ backgroundColor:'#3C2A21', padding:12, cornerRadius:10, displayColors:false, callbacks:{ label:c=>c.dataset.label+': '+rp(c.parsed.y) } } },
+              scales:{ y:{ beginAtZero:true, grid:{color:'#F7EADB'}, border:{display:false}, ticks:{ callback:v=>rpShort(v), font:{size:10} } },
+                       x:{ grid:{display:false}, border:{display:false}, ticks:{font:{size:10}} } } } };
         } else {
           const hari = [...new Set(this.keuPeriode.map(e=>e.tgl))].sort();
           cfg = { type:'line',
             data:{ labels: hari.map(t=>tglID(t).split(' ').slice(0,2).join(' ')),
               datasets:[
+                // PERBAIKAN: sebelumnya kedua garis pakai fill:true (area transparan),
+                // area Pengeluaran bisa menutupi garis Pemasukan kalau nilainya jauh
+                // lebih kecil. Sekarang keduanya garis polos tanpa area supaya selalu
+                // kelihatan berdampingan, seberapa pun jauh selisih nilainya.
                 { label:'Pemasukan', data: hari.map(t=>this.keuPeriode.filter(e=>e.tgl===t&&e.jenis==='pemasukan').reduce((a,e)=>a+e.nominal,0)),
-                  borderColor:'#5E9450', backgroundColor:'rgba(94,148,80,.12)', fill:true, tension:.35, borderWidth:3, pointRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2 },
+                  borderColor:'#5E9450', backgroundColor:'#5E9450', fill:false, tension:.35, borderWidth:3, pointRadius:4, pointBackgroundColor:'#fff', pointBorderColor:'#5E9450', pointBorderWidth:2 },
                 { label:'Pengeluaran', data: hari.map(t=>this.keuPeriode.filter(e=>e.tgl===t&&e.jenis==='pengeluaran').reduce((a,e)=>a+e.nominal,0)),
-                  borderColor:'#D97E7E', backgroundColor:'rgba(217,126,126,.12)', fill:true, tension:.35, borderWidth:3, pointRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2 }
+                  borderColor:'#D97E7E', backgroundColor:'#D97E7E', fill:false, tension:.35, borderWidth:3, pointRadius:4, pointBackgroundColor:'#fff', pointBorderColor:'#D97E7E', pointBorderWidth:2 }
               ] },
             options:{ responsive:true, maintainAspectRatio:false,
               plugins:{ legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:8, padding:14, font:{size:11} } },
