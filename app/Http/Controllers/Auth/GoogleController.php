@@ -13,14 +13,17 @@ class GoogleController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->with(['prompt' => 'select_account'])->redirect();
+        /** @var \Laravel\Socialite\Two\GoogleProvider $driver */
+        $driver = Socialite::driver('google');
+
+        return $driver->with(['prompt' => 'select_account'])->redirect();
     }
 
     public function callback()
     {
         try {
             $googleUser = Socialite::driver('google')->user();
-            
+
             // Cek apakah email sudah terdaftar
             $user = User::where('email', $googleUser->getEmail())->first();
 
